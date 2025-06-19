@@ -1,4 +1,5 @@
-    // تكوين البوت والإعدادات
+
+// تكوين البوت والإعدادات
 const CONFIG = {
   token: '7619744256:AAGlTErNoXyRAoBwNO0f8SNwDBzIA2y1Pws',
   apiEndpoint: 'https://api.telegram.org/bot',
@@ -15,8 +16,12 @@ const elements = {
   replyPreview: document.getElementById('replyPreview'),
   replyText: document.getElementById('replyText'),
   cancelReplyBtn: document.getElementById('cancelReplyBtn'),
-  charCounter: document.getElementById('charCounter'), // عداد الحروف
-  clearDeletedBtn: document.getElementById('clearDeletedBtn') // زر إزالة الرسائل المحذوفة
+  charCounter: document.getElementById('charCounter'),
+  clearDeletedBtn: document.getElementById('clearDeletedBtn'),
+  imageInput: document.getElementById('imageInput'),
+  uploadImageBtn: document.getElementById('uploadImageBtn'),
+  imageUploadLabel: document.querySelector('.image-upload-label'),
+  imagePreview: document.getElementById('imagePreview')
 };
 
 // حالة التطبيق
@@ -26,6 +31,13 @@ let appState = {
   sentMessages: [],
   replyTo: null
 };
+
+// مؤقتات الكتابة والحالة
+let typingTimer, idleTimer;
+let lastStatus = { message: '', type: '' };
+
+// الصورة المختارة
+let selectedImage = null;
 
 // دوال مساعدة
 const utils = {
@@ -97,7 +109,6 @@ const utils = {
       item.style.cursor = msg.deleted ? 'default' : 'pointer';
       item.title = msg.deleted ? 'هذه الرسالة تم حذفها' : 'انقر للرد على هذه الرسالة';
 
-      // تأثير الرسالة المحذوفة
       if (msg.deleted) {
         item.style.color = '#f44336';
         item.style.opacity = '0.6';
@@ -112,7 +123,6 @@ const utils = {
         item.style.background = '';
       }
 
-      // ترميز آمن للنص
       const safeText = msg.text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -140,6 +150,13 @@ const utils = {
       const messageContent = document.createElement('div');
       messageContent.innerHTML = safeText;
       textDiv.appendChild(messageContent);
+
+      if (msg.is_image) {
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'sent-message-image';
+        imageDiv.innerHTML = '<i class="fa fa-image" aria-hidden="true"></i> صورة';
+        textDiv.appendChild(imageDiv);
+      }
 
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'delete-btn';
@@ -239,7 +256,6 @@ async function deleteSentMessage(index) {
   if (index < 0 || index >= appState.sentMessages.length) return;
   const msg = appState.sentMessages[index];
   if (!msg.message_id) {
-    // حذف محلي فقط
     appState.sentMessages.splice(index, 1);
     utils.saveSentMessages();
     utils.renderSentMessages();
@@ -261,18 +277,16 @@ async function deleteSentMessage(index) {
 function updateCharCounter() {
   const length = elements.message.value.length;
   elements.charCounter.textContent = `${length} / 1000`;
-
-  elements.charCounter.style.color = '#fff'; // اللون الافتراضي أبيض
+  elements.charCounter.style.color = '#fff';
   elements.charCounter.style.fontWeight = '600';
-
   if (length >= 1500) {
-    elements.charCounter.style.color = '#d32f2f'; // أحمر داكن جداً
+    elements.charCounter.style.color = '#d32f2f';
     elements.charCounter.style.fontWeight = 'bold';
   } else if (length >= 500) {
-    elements.charCounter.style.color = '#f57c00'; // برتقالي داكن
+    elements.charCounter.style.color = '#f57c00';
     elements.charCounter.style.fontWeight = 'bold';
   } else if (length >= 200) {
-    elements.charCounter.style.color = '#fbc02d'; // أصفر ذهبي
+    elements.charCounter.style.color = '#fbc02d';
     elements.charCounter.style.fontWeight = '600';
   }
 }
@@ -282,18 +296,259 @@ function clearAllDeletedMessages() {
   const beforeCount = appState.sentMessages.length;
   appState.sentMessages = appState.sentMessages.filter(msg => !msg.deleted);
   const afterCount = appState.sentMessages.length;
-
   if (beforeCount === afterCount) {
     utils.showNotification('لا توجد رسائل محذوفة للحذف', 'warning');
     return;
   }
-
   utils.saveSentMessages();
   utils.renderSentMessages();
   utils.showNotification(`تم حذف ${beforeCount - afterCount} رسالة محذوفة من الموقع`, 'success');
 }
 
-// تهيئة التطبيق
+// عرض الصورة المختارة مع معلومات الحجم والنوع وشريط التقدم والسرعة
+function displaySelectedImage(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    elements.imagePreview.innerHTML = `<img src="${e.target.result}" alt="صورة مختارة" style="max-width:100%; border-radius:12px;">`;
+    elements.imagePreview.style.display = 'block';
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    const type = file.type.split('/')[1].toUpperCase();
+    const infoLabel = document.createElement('div');
+    infoLabel.className = 'upload-info-label';
+    infoLabel.innerHTML = `الحجم: <b>${sizeMB} MB</b> | النوع: <b>${type}</b>`;
+    elements.imagePreview.appendChild(infoLabel);
+    const progressBar = document.createElement('div');
+    progressBar.className = 'upload-progress-bar';
+    progressBar.innerHTML = `<div class="progress-inner" style="width:0%;">0%</div>`;
+    elements.imagePreview.appendChild(progressBar);
+    const speedLabel = document.createElement('div');
+    speedLabel.className = 'upload-speed-label';
+    speedLabel.innerHTML = `السرعة: <b>0 KB/s</b>`;
+    elements.imagePreview.appendChild(speedLabel);
+    selectedImage = file;
+    elements.uploadProgressBar = progressBar.querySelector('.progress-inner');
+    elements.uploadSpeedLabel = speedLabel;
+  };
+  reader.readAsDataURL(file);
+}
+
+// إرسال الصورة مع progress وسرعة الرفع
+async function sendImageToBot() {
+  if (!selectedImage) {
+    utils.showNotification('الرجاء اختيار صورة أولاً', 'warning');
+    return;
+  }
+  if (!appState.chatId) {
+    utils.showNotification('لم يتم تحديد محادثة نشطة', 'error');
+    return;
+  }
+  elements.feedback.innerHTML = '<span style="color: #fbc02d;">يتم رفع الصورة...</span>';
+  const formData = new FormData();
+  formData.append('chat_id', appState.chatId);
+  formData.append('photo', selectedImage);
+  if (elements.message.value.trim()) {
+    formData.append('caption', elements.message.value.trim());
+    formData.append('parse_mode', 'HTML');
+  }
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CONFIG.apiEndpoint}${CONFIG.token}/sendPhoto`, true);
+    const startTime = Date.now();
+    let lastLoaded = 0;
+    xhr.upload.onprogress = function(event) {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        const elapsed = (Date.now() - startTime) / 1000;
+        const speed = ((event.loaded - lastLoaded) / 1024 / (elapsed || 1)).toFixed(2);
+        lastLoaded = event.loaded;
+        if (elements.uploadProgressBar) {
+          elements.uploadProgressBar.style.width = percent + '%';
+          elements.uploadProgressBar.textContent = percent + '%';
+        }
+        if (elements.uploadSpeedLabel) {
+          let speedText = speed < 1024 ? `${speed} KB/s` : `${(speed / 1024).toFixed(2)} MB/s`;
+          elements.uploadSpeedLabel.innerHTML = `السرعة: <b>${speedText}</b>`;
+        }
+      }
+    };
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        if (data.ok) {
+          elements.feedback.innerHTML = '<span style="color: #4caf50;">✅ تم إرسال الصورة بنجاح!</span>';
+          utils.showNotification('تم إرسال الصورة', 'success');
+          const sentMsg = {
+            text: elements.message.value || 'صورة',
+            timestamp: new Date().toISOString(),
+            message_id: data.result.message_id,
+            is_image: true,
+            image_id: data.result.photo[0].file_id,
+            reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
+            reply_to_text: appState.replyTo ? appState.replyTo.text : null
+          };
+          utils.addSentMessage(sentMsg);
+          elements.message.value = '';
+          selectedImage = null;
+          elements.imagePreview.style.display = 'none';
+          elements.imagePreview.innerHTML = '';
+          localStorage.removeItem('telegram-bot-draft');
+          cancelReply();
+          updateCharCounter();
+          resolve();
+        } else {
+          elements.feedback.innerHTML = `<span style="color: #f44336;">❌ فشل في إرسال الصورة: ${data.description}</span>`;
+          reject();
+        }
+      } else {
+        elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+        reject();
+      }
+    };
+    xhr.onerror = function() {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+      reject();
+    };
+    xhr.send(formData);
+  });
+}
+
+// إرسال رسالة نصية أو صورة مع تعليق
+async function sendCurrentMessage() {
+  if (selectedImage) {
+    await sendImageToBot();
+  } else {
+    const message = elements.message.value.trim();
+    if (!utils.validateInput(message)) {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">يرجى كتابة رسالة صالحة</span>';
+      return;
+    }
+    if (!appState.chatId) {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">لم يتم تحديد محادثة نشطة</span>';
+      return;
+    }
+    elements.sendBtn.disabled = true;
+    utils.showLoader(elements.feedback, 'جارٍ إرسال الرسالة...');
+    try {
+      const bodyData = {
+        chat_id: appState.chatId,
+        text: message,
+        parse_mode: 'HTML'
+      };
+      if (appState.replyTo && appState.replyTo.message_id) {
+        bodyData.reply_to_message_id = appState.replyTo.message_id;
+      }
+      const response = await fetch(`${CONFIG.apiEndpoint}${CONFIG.token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+      const data = await response.json();
+      if (data.ok) {
+        elements.feedback.innerHTML = '<span style="color: #4caf50;">✅ تم إرسال الرسالة بنجاح!</span>';
+        utils.showNotification('تم إرسال الرسالة', 'success');
+        const sentMsg = {
+          text: message,
+          timestamp: new Date().toISOString(),
+          message_id: data.result.message_id,
+          reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
+          reply_to_text: appState.replyTo ? appState.replyTo.text : null
+        };
+        utils.addSentMessage(sentMsg);
+        elements.message.value = '';
+        localStorage.removeItem('telegram-bot-draft');
+        cancelReply();
+        updateCharCounter();
+      } else {
+        elements.feedback.innerHTML = '<span style="color: #f44336;">❌ فشل في إرسال الرسالة</span>';
+      }
+    } catch {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+    } finally {
+      elements.sendBtn.disabled = false;
+    }
+  }
+}
+
+// إعداد مستمعي الأحداث
+function setupEventListeners() {
+  elements.sendBtn.addEventListener('click', sendCurrentMessage);
+  elements.message.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendCurrentMessage();
+    }
+  });
+  elements.message.addEventListener('input', () => {
+    utils.saveDraft();
+    updateCharCounter();
+    if (!appState.isConnected) return;
+    clearTimeout(typingTimer);
+    clearTimeout(idleTimer);
+    utils.updateStatus('جارٍ الكتابة...', 'warning');
+    elements.feedback.innerHTML = '';
+    typingTimer = setTimeout(() => {
+      lastStatus.message = appState.chatId ? '✅ متصل' : '❌ غير متصل';
+      lastStatus.type = appState.chatId ? 'success' : 'error';
+      utils.updateStatus(lastStatus.message, lastStatus.type);
+      idleTimer = setTimeout(() => {
+        utils.updateStatus('استمر في الكتابة، ما بك؟', 'warning');
+        setTimeout(() => {
+          utils.updateStatus(lastStatus.message, lastStatus.type);
+        }, 3000);
+      }, 8000);
+    }, 1000);
+  });
+  elements.cancelReplyBtn.addEventListener('click', cancelReply);
+  if (elements.clearDeletedBtn) {
+    elements.clearDeletedBtn.addEventListener('click', clearAllDeletedMessages);
+  }
+  if (elements.imageInput) {
+    elements.imageInput.addEventListener('change', (event) => {
+      if (event.target.files && event.target.files[0]) {
+        const file = event.target.files[0];
+        if (!file.type.match('image.*')) {
+          utils.showNotification('يرجى اختيار ملف صورة صالح', 'error');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          utils.showNotification('حجم الصورة يجب أن يكون أقل من 10 ميجابايت', 'error');
+          return;
+        }
+        displaySelectedImage(file);
+      }
+    });
+  }
+  if (elements.uploadImageBtn) {
+    elements.uploadImageBtn.addEventListener('click', sendImageToBot);
+  }
+  if (elements.imageUploadLabel) {
+    elements.imageUploadLabel.addEventListener('click', () => {
+      elements.imageInput.click();
+    });
+  }
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    if (tg.themeParams?.button_color) {
+      document.documentElement.style.setProperty('--primary-color', tg.themeParams.button_color);
+    }
+    tg.MainButton.setText('إرسال رسالة');
+    tg.MainButton.onClick(sendCurrentMessage);
+    tg.MainButton.show();
+  }
+}
+
+// بدء التطبيق
+document.addEventListener('DOMContentLoaded', () => {
+  utils.loadDraft();
+  utils.loadSentMessages();
+  utils.renderSentMessages();
+  updateCharCounter();
+  setupEventListeners();
+  init();
+});
+
+// اختبار اتصال البوت وتهيئة التطبيق
 async function init() {
   if (!CONFIG.token) {
     utils.updateStatus('❌ لم يتم تعيين توكن البوت', 'error');
@@ -341,132 +596,23 @@ async function init() {
   }
 }
 
-// إرسال رسالة
-async function sendCurrentMessage() {
-  const message = elements.message.value.trim();
-  if (!utils.validateInput(message)) {
-    elements.feedback.innerHTML =
-      '<span style="color: #f44336;">يرجى كتابة رسالة صالحة</span>';
-    return;
-  }
-  if (!appState.chatId) {
-    elements.feedback.innerHTML =
-      '<span style="color: #f44336;">لم يتم تحديد محادثة نشطة</span>';
-    return;
-  }
-  elements.sendBtn.disabled = true;
-  utils.showLoader(elements.feedback, 'جارٍ إرسال الرسالة...');
-  try {
-    const bodyData = {
-      chat_id: appState.chatId,
-      text: message,
-      parse_mode: 'HTML'
-    };
-    if (appState.replyTo && appState.replyTo.message_id) {
-      bodyData.reply_to_message_id = appState.replyTo.message_id;
-    }
-    const response = await fetch(`${CONFIG.apiEndpoint}${CONFIG.token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
-    });
-    const data = await response.json();
-    if (data.ok) {
-      elements.feedback.innerHTML =
-        '<span style="color: #4caf50;">✅ تم إرسال الرسالة بنجاح!</span>';
-      utils.showNotification('تم إرسال الرسالة', 'success');
-      const sentMsg = {
-        text: message,
-        timestamp: new Date().toISOString(),
-        message_id: data.result.message_id,
-        reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
-        reply_to_text: appState.replyTo ? appState.replyTo.text : null
-      };
-      utils.addSentMessage(sentMsg);
-      elements.message.value = '';
-      localStorage.removeItem('telegram-bot-draft');
-      cancelReply();
-      updateCharCounter(); // تحديث العداد بعد الإرسال
-    } else {
-      elements.feedback.innerHTML =
-        '<span style="color: #f44336;">❌ فشل في إرسال الرسالة</span>';
-    }
-  } catch {
-    elements.feedback.innerHTML =
-      '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
-  } finally {
-    elements.sendBtn.disabled = false;
-  }
-}
-
-// إعداد مستمعي الأحداث
-function setupEventListeners() {
-  elements.sendBtn.addEventListener('click', sendCurrentMessage);
-  elements.message.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      sendCurrentMessage();
-    }
-  });
-  elements.message.addEventListener('input', () => {
-    utils.saveDraft();
-    updateCharCounter();
-
-    if (!appState.isConnected) return;
-    clearTimeout(typingTimer);
-    clearTimeout(idleTimer);
-    utils.updateStatus('جارٍ الكتابة...', 'warning'); // لون برتقالي حسب CSS
-    elements.feedback.innerHTML = '';
-    typingTimer = setTimeout(() => {
-      lastStatus.message = appState.chatId ? '✅ متصل' : '❌ غير متصل';
-      lastStatus.type = appState.chatId ? 'success' : 'error';
-      utils.updateStatus(lastStatus.message, lastStatus.type);
-
-      idleTimer = setTimeout(() => {
-        utils.updateStatus('استمر في الكتابة، ما بك؟', 'warning');
-        setTimeout(() => {
-          utils.updateStatus(lastStatus.message, lastStatus.type);
-        }, 3000);
-      }, 8000);
-    }, 1000);
-  });
-
-  elements.cancelReplyBtn.addEventListener('click', cancelReply);
-
-  if (elements.clearDeletedBtn) {
-    elements.clearDeletedBtn.addEventListener('click', clearAllDeletedMessages);
-  }
-
-  if (window.Telegram?.WebApp) {
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    if (tg.themeParams?.button_color) {
-      document.documentElement.style.setProperty('--primary-color', tg.themeParams.button_color);
-    }
-    tg.MainButton.setText('إرسال رسالة');
-    tg.MainButton.onClick(sendCurrentMessage);
-    tg.MainButton.show();
-  }
-}
-
-// متغيرات مؤقتات الكتابة والحالة
-let typingTimer, idleTimer;
-let lastStatus = { message: '', type: '' };
-
-// بدء التطبيق
-document.addEventListener('DOMContentLoaded', () => {
-  utils.loadDraft();
-  utils.loadSentMessages();
-  utils.renderSentMessages();
-  updateCharCounter();
-  setupEventListeners();
-  init();
-});
-
 // معالجة الأخطاء العامة
-window.addEventListener('error', (event) => {
+window.addEventListener('error', () => {
   utils.showNotification('حدث خطأ غير متوقع', 'error');
 });
-window.addEventListener('unhandledrejection', (event) => {
+window.addEventListener('unhandledrejection', () => {
   utils.showNotification('حدث خطأ في المعالجة', 'error');
 });
+// مثال على صندوق الحالة
+const statusEl = document.getElementById('status');
+statusEl.classList.add('animate-success');
+setTimeout(() => {
+  statusEl.classList.remove('animate-success');
+}, 900);
+
+// أو لصندوق الكتابة:
+const inputEl = document.getElementById('message');
+inputEl.classList.add('animate-success');
+setTimeout(() => {
+  inputEl.classList.remove('animate-success');
+}, 900);
