@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="واجهة تواصل مع بوت التيلجرام" />
-    <title>تواصل بهوية مجهولة معنا</title>
-      <link rel="stylesheet" href="styles.css" />
+    <meta name="description" content="واجهة تواصل محسّنة مع بوت التيلجرام" />
+    <title>تواصل مع قناة الإصدار المدفوع</title>
+    <link rel="stylesheet" href="styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-   
 </head>
 <body>
   <div class="container" role="main" aria-label="واجهة تواصل مع بوت التيلجرام">
@@ -38,7 +37,16 @@
     />
     
     <button id="sendBtn" aria-label="إرسال الرسالة">إرسال</button>
+    
     <div id="feedback" class="feedback" aria-live="assertive" aria-atomic="true"></div>
+    
+
+<div class="image-upload-container">
+  <label for="imageInput" class="image-upload-label" data-tippy-content="اختر صورة من جهازك">اختر صورة للإرسال</label>
+  <input type="file" id="imageInput" accept="image/jpeg, image/png, image/jpg" style="display: none;">
+ 
+  <div id="imagePreview" class="image-preview"></div>
+</div>
 
     
     <section class="sent-messages-container" aria-label="الرسائل المرسلة">
@@ -65,12 +73,11 @@
   إزالة كل الرسائل المحذوفة
 </button>
 
-
+    
     <div class="developer-rights" aria-label="حقوق تطوير">
       تم تطوير هذا الموقع بواسطة حمزاوي أحمد - جميع الحقوق محفوظة © 2025
     </div>
   </div>
-
     <script src="script.js"></script>
 </body>
 </html>
