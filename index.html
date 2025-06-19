@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>موقعي - بوت تيليجرام</title>
+  <!-- ربط ملف CSS خارجي -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- مكتبة Tippy.js لمؤشرات الشرح -->
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+</head>
+<body>
+  <div class="container" role="main" aria-label="واجهة بوت تيليجرام">
+    <h1>بوت تيليجرام</h1>
+
+    <div id="status" class="status" aria-live="polite" aria-atomic="true">جارٍ التحميل...</div>
+
+    <div id="replyPreview" style="display:none;" aria-live="polite" aria-atomic="true">
+      <span id="replyText"></span>
+      <button id="cancelReplyBtn" aria-label="إلغاء الرد على الرسالة المحددة" data-tippy-content="إلغاء الرد على الرسالة المحددة">&times;</button>
+    </div>
+
+    <label for="message" class="visually-hidden">اكتب رسالتك هنا</label>
+    <input id="message" type="text" placeholder="اكتب رسالتك هنا..." maxlength="1000" autocomplete="off" aria-describedby="charCounter" />
+
+    <div id="charCounter" aria-live="polite" aria-atomic="true" style="text-align:left; font-weight:600; margin-top:4px; font-family:'Cairo', sans-serif; user-select:none; color:#fff;">
+      0 / 1000
+    </div>
+
+    <button id="sendBtn" data-tippy-content="إرسال الرسالة إلى البوت" aria-label="إرسال الرسالة">إرسال</button>
+
+    <div id="feedback" class="feedback" aria-live="polite" aria-atomic="true" style="min-height:30px; margin-top:8px;"></div>
+
+    <section class="sent-messages-container" aria-label="الرسائل المرسلة">
+      <h2>الرسائل المرسلة</h2>
+      <div id="sentMessagesList" role="list" aria-live="polite" aria-atomic="false" tabindex="0" style="max-height:220px; overflow-y:auto;"></div>
+      <button id="clearDeletedBtn" data-tippy-content="حذف جميع الرسائل المحذوفة من الموقع" aria-label="إزالة كل الرسائل المحذوفة" style="margin-top:10px;">
+        إزالة كل الرسائل المحذوفة
+      </button>
+    </section>
+
+    <footer class="developer-rights" aria-label="حقوق التطوير" style="font-size:0.8rem; color:rgba(255,255,255,0.6); margin-top:0.5rem; text-align:center; font-style:italic; user-select:none;">
+      تطوير: اسمك أو شركتك
+    </footer>
+  </div>
+
+  <!-- مكتبات Popper.js و Tippy.js -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <!-- ربط ملف JS خارجي -->
+  <script src="js/script.js"></script>
+</body>
+</html>
