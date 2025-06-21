@@ -1,1 +1,999 @@
-const a0_0x1ae0c5=a0_0x5bc0;(function(_0x957792,_0x50f9c2){const _0x22da09=a0_0x5bc0,_0x3b8759=_0x957792();while(!![]){try{const _0x4a1090=parseInt(_0x22da09(0x96))/0x1+parseInt(_0x22da09(0x140))/0x2+-parseInt(_0x22da09(0x175))/0x3+parseInt(_0x22da09(0x126))/0x4*(parseInt(_0x22da09(0x17a))/0x5)+parseInt(_0x22da09(0x115))/0x6*(-parseInt(_0x22da09(0xd3))/0x7)+-parseInt(_0x22da09(0x9a))/0x8+parseInt(_0x22da09(0x16c))/0x9*(parseInt(_0x22da09(0xcf))/0xa);if(_0x4a1090===_0x50f9c2)break;else _0x3b8759['push'](_0x3b8759['shift']());}catch(_0x160902){_0x3b8759['push'](_0x3b8759['shift']());}}}(a0_0xe499,0xe0aa2));const CONFIG={'token':'8144523716:AAFbLn5WKz2WAZ5ZFms14zNh9Q4YdCUlROc','apiEndpoint':a0_0x1ae0c5(0x12c),'localStorageKey':'telegram-bot-sent-messages'},elements={'status':document['getElementById'](a0_0x1ae0c5(0x109)),'message':document[a0_0x1ae0c5(0x164)]('message'),'sendBtn':document[a0_0x1ae0c5(0x164)]('sendBtn'),'feedback':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x165)),'sentMessagesList':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x15e)),'replyPreview':document['getElementById'](a0_0x1ae0c5(0xa4)),'replyText':document[a0_0x1ae0c5(0x164)]('replyText'),'cancelReplyBtn':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0xc2)),'charCounter':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0xf7)),'typingStatus':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x138)),'clearDeletedBtn':document['getElementById'](a0_0x1ae0c5(0x177)),'imageInput':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x12e)),'uploadImageBtn':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0xe7)),'imageUploadLabel':document[a0_0x1ae0c5(0xd2)](a0_0x1ae0c5(0x10e)),'imagePreview':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x10d)),'name':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x14d)),'phone':document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0xb2))};let appState={'chatId':null,'isConnected':![],'sentMessages':[],'replyTo':null},typingTimer,idleTimer,lastStatus={'message':'','type':''},selectedImage=null;const utils={'validateInput'(_0x2500ef){const _0x2d2117=a0_0x1ae0c5;return typeof _0x2500ef==='string'&&_0x2500ef[_0x2d2117(0x1a9)]()['length']>0x0&&_0x2500ef[_0x2d2117(0x145)]<=0x3e8;},'showLoader'(_0x8afb53,_0x542b15=a0_0x1ae0c5(0xdf)){const _0x38ea02=a0_0x1ae0c5;_0x8afb53[_0x38ea02(0xc0)]='\x0a\x20\x20\x20\x20\x20\x20<div\x20class=\x22spinner\x22\x20role=\x22status\x22\x20aria-live=\x22polite\x22\x20aria-label=\x22'+_0x542b15+_0x38ea02(0x139)+_0x542b15+'</span>\x0a\x20\x20\x20\x20';},'showNotification'(_0x2cf044,_0x5dcbd2=a0_0x1ae0c5(0xc1)){const _0x452a42=a0_0x1ae0c5,_0x5c3e82=document['createElement'](_0x452a42(0xe5));_0x5c3e82[_0x452a42(0xf8)]='notification\x20notification-'+_0x5dcbd2,_0x5c3e82[_0x452a42(0x116)]=_0x2cf044,document[_0x452a42(0x11c)][_0x452a42(0x168)](_0x5c3e82),setTimeout(()=>{const _0x2b3aa2=_0x452a42;_0x5c3e82[_0x2b3aa2(0xf6)][_0x2b3aa2(0x173)](_0x2b3aa2(0x166)),setTimeout(()=>_0x5c3e82['remove'](),0x12c);},0xbb8);},'updateStatus'(_0x5ea5d1,_0x1acab7=a0_0x1ae0c5(0xc1)){const _0xc06b51=a0_0x1ae0c5;elements['status'][_0xc06b51(0x116)]=_0x5ea5d1,elements[_0xc06b51(0x109)][_0xc06b51(0xf8)]='status\x20'+_0x1acab7;},'saveDraft'(){const _0x272f21=a0_0x1ae0c5;localStorage[_0x272f21(0x19b)](_0x272f21(0xc7),elements[_0x272f21(0x144)][_0x272f21(0x18b)]),localStorage[_0x272f21(0x19b)]('telegram-bot-name',elements[_0x272f21(0x14d)][_0x272f21(0x18b)]),localStorage['setItem'](_0x272f21(0xa5),elements[_0x272f21(0xb2)][_0x272f21(0x18b)]);},'loadDraft'(){const _0x544d1d=a0_0x1ae0c5,_0x5ac4a3=localStorage[_0x544d1d(0xe6)](_0x544d1d(0xc7)),_0x2c8ebb=localStorage['getItem'](_0x544d1d(0xbd)),_0x4efa65=localStorage[_0x544d1d(0xe6)](_0x544d1d(0xa5));if(_0x5ac4a3)elements[_0x544d1d(0x144)]['value']=_0x5ac4a3;if(_0x2c8ebb)elements[_0x544d1d(0x14d)][_0x544d1d(0x18b)]=_0x2c8ebb;if(_0x4efa65)elements['phone']['value']=_0x4efa65;},'saveSentMessages'(){const _0x331e07=a0_0x1ae0c5;try{localStorage[_0x331e07(0x19b)](CONFIG['localStorageKey'],JSON[_0x331e07(0x108)](appState[_0x331e07(0x121)]));}catch(_0x41a300){console[_0x331e07(0xf0)](_0x331e07(0xfc),_0x41a300);}},'loadSentMessages'(){const _0x2c438b=a0_0x1ae0c5;try{const _0x186efe=localStorage[_0x2c438b(0xe6)](CONFIG[_0x2c438b(0x12d)]);appState[_0x2c438b(0x121)]=_0x186efe?JSON['parse'](_0x186efe):[];}catch(_0x21cb59){appState['sentMessages']=[];}},'renderSentMessages'(){const _0x5ce339=a0_0x1ae0c5;elements[_0x5ce339(0x15e)][_0x5ce339(0xc0)]='';if(appState[_0x5ce339(0x121)][_0x5ce339(0x145)]===0x0){elements['sentMessagesList'][_0x5ce339(0xc0)]='<p\x20style=\x22color:\x20rgba(255,255,255,0.6);\x20font-style:\x20italic;\x22>لا\x20توجد\x20رسائل\x20مرسلة\x20حتى\x20الآن.</p>';return;}appState[_0x5ce339(0x121)][_0x5ce339(0x15b)]((_0x8464b0,_0x4c88d4)=>{const _0x5310b4=_0x5ce339,_0x11acca=document[_0x5310b4(0xfb)]('div');_0x11acca[_0x5310b4(0xf8)]=_0x5310b4(0x13d),_0x11acca[_0x5310b4(0xb5)](_0x5310b4(0xbe),'listitem'),_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0x1ac)]=_0x8464b0['deleted']?_0x5310b4(0x11d):'pointer',_0x11acca[_0x5310b4(0x129)]=_0x8464b0[_0x5310b4(0x131)]?'هذه\x20الرسالة\x20تم\x20حذفها':_0x5310b4(0x1a3);_0x8464b0[_0x5310b4(0x131)]?(_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0x125)]='#f44336',_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0x13c)]='0.6',_0x11acca[_0x5310b4(0xc8)]['fontStyle']=_0x5310b4(0xc5),_0x11acca['style'][_0x5310b4(0xdc)]=_0x5310b4(0x157),_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0x19e)]=_0x5310b4(0x150)):(_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0x125)]=_0x5310b4(0x12b),_0x11acca['style'][_0x5310b4(0x13c)]='1',_0x11acca[_0x5310b4(0xc8)][_0x5310b4(0xb9)]=_0x5310b4(0x18d),_0x11acca['style'][_0x5310b4(0xdc)]='none',_0x11acca['style'][_0x5310b4(0x19e)]='');const _0x51b78e=_0x8464b0[_0x5310b4(0xec)]['replace'](/&/g,_0x5310b4(0xd5))[_0x5310b4(0xf1)](/</g,_0x5310b4(0x118))['replace'](/>/g,_0x5310b4(0x180))[_0x5310b4(0xf1)](/"/g,_0x5310b4(0x195))[_0x5310b4(0xf1)](/'/g,_0x5310b4(0x1a6))[_0x5310b4(0xf1)](/\n/g,_0x5310b4(0x18a)),_0xd715cd=document[_0x5310b4(0xfb)](_0x5310b4(0xe5));_0xd715cd[_0x5310b4(0xf8)]=_0x5310b4(0x198);if(_0x8464b0[_0x5310b4(0x17d)]){const _0x31dd5b=document[_0x5310b4(0xfb)](_0x5310b4(0xe5));_0x31dd5b[_0x5310b4(0xf8)]=_0x5310b4(0x133),_0x31dd5b[_0x5310b4(0xc0)]=_0x8464b0[_0x5310b4(0x17d)][_0x5310b4(0xf1)](/&/g,_0x5310b4(0xd5))['replace'](/</g,'&lt;')['replace'](/>/g,_0x5310b4(0x180))[_0x5310b4(0xf1)](/"/g,_0x5310b4(0x195))[_0x5310b4(0xf1)](/'/g,'&#39;')[_0x5310b4(0xf1)](/\n/g,_0x5310b4(0x18a)),_0xd715cd[_0x5310b4(0x168)](_0x31dd5b);}const _0x58c04e=document[_0x5310b4(0xfb)]('div');_0x58c04e[_0x5310b4(0xc0)]=_0x51b78e,_0xd715cd[_0x5310b4(0x168)](_0x58c04e);if(_0x8464b0[_0x5310b4(0xa1)]){const _0x44d39d=document[_0x5310b4(0xfb)](_0x5310b4(0xe5));_0x44d39d[_0x5310b4(0xf8)]=_0x5310b4(0xd4),_0x44d39d[_0x5310b4(0xc0)]=_0x5310b4(0x196),_0xd715cd[_0x5310b4(0x168)](_0x44d39d);}const _0x2739a1=document[_0x5310b4(0xfb)](_0x5310b4(0x15c));_0x2739a1[_0x5310b4(0xf8)]=_0x5310b4(0xf9),_0x2739a1[_0x5310b4(0xb5)](_0x5310b4(0xd6),_0x5310b4(0x17b)+(_0x4c88d4+0x1)),_0x2739a1['title']=_0x5310b4(0x100),_0x2739a1['innerHTML']=_0x5310b4(0xf3),_0x2739a1[_0x5310b4(0x119)]=_0x8464b0[_0x5310b4(0x131)],_0x2739a1['addEventListener'](_0x5310b4(0x97),async _0x36d337=>{const _0x19aadb=_0x5310b4;_0x36d337[_0x19aadb(0xab)]();if(!_0x8464b0['deleted'])await deleteSentMessage(_0x4c88d4);}),_0x11acca['appendChild'](_0xd715cd),_0x11acca[_0x5310b4(0x168)](_0x2739a1),!_0x8464b0['deleted']&&_0x11acca[_0x5310b4(0x189)](_0x5310b4(0x97),()=>{setReplyToMessage(_0x4c88d4);}),elements['sentMessagesList']['appendChild'](_0x11acca);});},'addSentMessage'(_0x4136a6){const _0x28a23e=a0_0x1ae0c5;appState[_0x28a23e(0x121)]['unshift'](_0x4136a6),utils[_0x28a23e(0xad)](),utils[_0x28a23e(0x152)]();}},api={async 'makeRequest'(_0x59fafe,_0x3641d4={}){const _0x41e07c=a0_0x1ae0c5,_0x4253f8=await fetch(''+CONFIG[_0x41e07c(0xf5)]+CONFIG[_0x41e07c(0x153)]+'/'+_0x59fafe,{'method':_0x3641d4[_0x41e07c(0xb6)]||_0x41e07c(0xfd),'headers':{'Content-Type':_0x41e07c(0xcb)},'body':_0x3641d4['body']||null});if(!_0x4253f8['ok'])throw new Error(_0x41e07c(0x191)+_0x4253f8[_0x41e07c(0x109)]);return await _0x4253f8[_0x41e07c(0xed)]();},async 'testConnection'(){const _0x85c175=a0_0x1ae0c5;try{const _0xb0e763=await this[_0x85c175(0x146)](_0x85c175(0x11b));return _0xb0e763['ok'];}catch{return![];}},async 'getUpdates'(){const _0x303292=a0_0x1ae0c5;try{const _0x1bb417=await this[_0x303292(0x146)](_0x303292(0x158));return _0x1bb417['ok']?_0x1bb417[_0x303292(0x9b)]:[];}catch{return[];}}};function setReplyToMessage(_0x361d89){const _0x3a5fd4=a0_0x1ae0c5,_0x4b39d5=appState[_0x3a5fd4(0x121)][_0x361d89];if(!_0x4b39d5)return;appState[_0x3a5fd4(0xdd)]=_0x4b39d5,elements[_0x3a5fd4(0xa4)][_0x3a5fd4(0xc8)][_0x3a5fd4(0x178)]=_0x3a5fd4(0x135),elements['replyText'][_0x3a5fd4(0x116)]=_0x4b39d5['text'][_0x3a5fd4(0x145)]>0x64?_0x4b39d5[_0x3a5fd4(0xec)]['slice'](0x0,0x64)+'...':_0x4b39d5[_0x3a5fd4(0xec)],elements[_0x3a5fd4(0x144)][_0x3a5fd4(0xbf)]();}function cancelReply(){const _0x5c0ec7=a0_0x1ae0c5;appState[_0x5c0ec7(0xdd)]=null,elements['replyPreview'][_0x5c0ec7(0xc8)]['display']=_0x5c0ec7(0xde),elements[_0x5c0ec7(0x9e)][_0x5c0ec7(0x116)]='';}async function deleteMessage(_0x8de17c,_0x243273){const _0x1d9e54=a0_0x1ae0c5;try{const _0x1e3e92=await fetch(''+CONFIG[_0x1d9e54(0xf5)]+CONFIG[_0x1d9e54(0x153)]+'/deleteMessage',{'method':_0x1d9e54(0xe4),'headers':{'Content-Type':_0x1d9e54(0xcb)},'body':JSON[_0x1d9e54(0x108)]({'chat_id':_0x8de17c,'message_id':_0x243273})}),_0x1f9fd8=await _0x1e3e92[_0x1d9e54(0xed)]();return _0x1f9fd8['ok'];}catch{return![];}}async function deleteSentMessage(_0x1dcebf){const _0x347daf=a0_0x1ae0c5;if(_0x1dcebf<0x0||_0x1dcebf>=appState[_0x347daf(0x121)][_0x347daf(0x145)])return;const _0x598fc2=appState[_0x347daf(0x121)][_0x1dcebf];if(!_0x598fc2[_0x347daf(0x14e)]){appState['sentMessages'][_0x347daf(0xac)](_0x1dcebf,0x1),utils[_0x347daf(0xad)](),utils[_0x347daf(0x152)](),utils[_0x347daf(0x124)](_0x347daf(0x151),'warning');return;}const _0x1d0799=await deleteMessage(appState[_0x347daf(0x10b)],_0x598fc2[_0x347daf(0x14e)]);_0x1d0799?(appState['sentMessages'][_0x1dcebf][_0x347daf(0x131)]=!![],utils['saveSentMessages'](),utils['renderSentMessages'](),utils[_0x347daf(0x124)]('تم\x20حذف\x20الرسالة\x20من\x20البوت،\x20وتم\x20تمييزها\x20كمحذوفة',_0x347daf(0x122))):utils[_0x347daf(0x124)](_0x347daf(0x183),'error');}function autoResize(){const _0x454789=a0_0x1ae0c5;elements[_0x454789(0x144)][_0x454789(0xc8)][_0x454789(0x110)]=_0x454789(0xa7),elements[_0x454789(0x144)]['style'][_0x454789(0x110)]=Math[_0x454789(0x174)](elements[_0x454789(0x144)][_0x454789(0x161)],0x104)+'px';}function updateCharCounter(){const _0x30d4b1=a0_0x1ae0c5,_0x5d3856=elements['message']['value'][_0x30d4b1(0x145)];elements['charCounter']['textContent']=_0x5d3856+'\x20/\x201000';if(_0x5d3856>=0x384)elements[_0x30d4b1(0xf7)][_0x30d4b1(0xc8)][_0x30d4b1(0x125)]='#d32f2f';else{if(_0x5d3856>=0x258)elements['charCounter'][_0x30d4b1(0xc8)][_0x30d4b1(0x125)]='#f57c00';else _0x5d3856>=0x12c?elements['charCounter'][_0x30d4b1(0xc8)][_0x30d4b1(0x125)]=_0x30d4b1(0x142):elements[_0x30d4b1(0xf7)][_0x30d4b1(0xc8)][_0x30d4b1(0x125)]=_0x30d4b1(0x19f);}}function showTypingStatus(){const _0x22075f=a0_0x1ae0c5;elements[_0x22075f(0x138)][_0x22075f(0xf6)][_0x22075f(0x173)](_0x22075f(0x160));}function hideTypingStatus(){const _0x1375d8=a0_0x1ae0c5;elements[_0x1375d8(0x138)][_0x1375d8(0xf6)][_0x1375d8(0xae)](_0x1375d8(0x160));}function clearAllDeletedMessages(){const _0x598168=a0_0x1ae0c5,_0x5db86c=appState[_0x598168(0x121)][_0x598168(0x145)];appState['sentMessages']=appState['sentMessages'][_0x598168(0x120)](_0x295795=>!_0x295795[_0x598168(0x131)]);const _0x327260=appState[_0x598168(0x121)]['length'];if(_0x5db86c===_0x327260){utils[_0x598168(0x124)]('لا\x20توجد\x20رسائل\x20محذوفة\x20للحذف',_0x598168(0x167));return;}utils[_0x598168(0xad)](),utils[_0x598168(0x152)](),utils[_0x598168(0x124)](_0x598168(0x14b)+(_0x5db86c-_0x327260)+'\x20رسالة\x20محذوفة\x20من\x20الموقع',_0x598168(0xba));}function displaySelectedImage(_0x5240a0){const _0x5019fc=a0_0x1ae0c5,_0x25c47d=new FileReader();_0x25c47d[_0x5019fc(0xb4)]=function(_0xc4df24){const _0x445466=_0x5019fc;elements['imagePreview'][_0x445466(0xc0)]=_0x445466(0x18f)+_0xc4df24[_0x445466(0xa6)][_0x445466(0x9b)]+_0x445466(0xf2),elements[_0x445466(0x10d)][_0x445466(0xc8)][_0x445466(0x178)]=_0x445466(0x135);const _0x30414e=(_0x5240a0[_0x445466(0x1a7)]/(0x400*0x400))[_0x445466(0x1a1)](0x2),_0x7eb57a=_0x5240a0[_0x445466(0x130)]['split']('/')[0x1][_0x445466(0x171)](),_0xece455=document['createElement'](_0x445466(0xe5));_0xece455[_0x445466(0xf8)]=_0x445466(0xb0),_0xece455[_0x445466(0xc0)]=_0x445466(0x132)+_0x30414e+_0x445466(0x12f)+_0x7eb57a+_0x445466(0xee),elements[_0x445466(0x10d)][_0x445466(0x168)](_0xece455);const _0x262951=document[_0x445466(0xfb)](_0x445466(0xe5));_0x262951[_0x445466(0xf8)]=_0x445466(0x141),_0x262951['innerHTML']=_0x445466(0x170),elements['imagePreview'][_0x445466(0x168)](_0x262951);const _0x302298=document[_0x445466(0xfb)](_0x445466(0xe5));_0x302298[_0x445466(0xf8)]=_0x445466(0x101),_0x302298['innerHTML']=_0x445466(0xb8),elements[_0x445466(0x10d)][_0x445466(0x168)](_0x302298),selectedImage=_0x5240a0,elements[_0x445466(0x17c)]=_0x262951[_0x445466(0xd2)](_0x445466(0x1a8)),elements['uploadSpeedLabel']=_0x302298;},_0x25c47d[_0x5019fc(0x99)](_0x5240a0);}function animateSendButtonSuccess(){const _0x4f0e16=a0_0x1ae0c5,_0x469e20=elements[_0x4f0e16(0x10f)];_0x469e20[_0x4f0e16(0xf6)][_0x4f0e16(0x173)](_0x4f0e16(0xba)),_0x469e20[_0x4f0e16(0x119)]=!![],setTimeout(()=>{const _0x51db6a=_0x4f0e16;_0x469e20[_0x51db6a(0xf6)][_0x51db6a(0xae)](_0x51db6a(0xba)),_0x469e20['disabled']=![];},0x5dc);}async function sendImageToBot(){const _0x4bc971=a0_0x1ae0c5;if(!selectedImage){utils[_0x4bc971(0x124)](_0x4bc971(0xb7),_0x4bc971(0x167));return;}const _0x54cec7=elements[_0x4bc971(0x14d)][_0x4bc971(0x18b)][_0x4bc971(0x1a9)](),_0x4d0c80=elements[_0x4bc971(0xb2)]['value'][_0x4bc971(0x1a9)]();if(!appState[_0x4bc971(0x10b)]){utils['showNotification']('لم\x20يتم\x20تحديد\x20محادثة\x20نشطة','error');return;}elements[_0x4bc971(0x165)][_0x4bc971(0xc0)]='<span\x20style=\x22color:\x20#fbc02d;\x22>يتم\x20رفع\x20الصورة...</span>';const _0x4aa08c=new FormData();_0x4aa08c[_0x4bc971(0x154)](_0x4bc971(0x128),appState['chatId']),_0x4aa08c['append'](_0x4bc971(0x113),selectedImage);let _0x47cd2a='';if(_0x54cec7)_0x47cd2a+=_0x4bc971(0xd0)+_0x54cec7+'\x0a';if(_0x4d0c80)_0x47cd2a+='رقم\x20الهاتف:\x20'+_0x4d0c80+'\x0a';if(_0x54cec7||_0x4d0c80)_0x47cd2a+='\x0a';return elements[_0x4bc971(0x144)][_0x4bc971(0x18b)][_0x4bc971(0x1a9)]()&&(_0x47cd2a+=_0x4bc971(0x14a)+elements[_0x4bc971(0x144)][_0x4bc971(0x18b)][_0x4bc971(0x1a9)]()),_0x47cd2a&&_0x4aa08c[_0x4bc971(0x154)](_0x4bc971(0x176),_0x47cd2a),_0x4aa08c[_0x4bc971(0x154)](_0x4bc971(0xea),'HTML'),new Promise((_0x5de8ee,_0x2c2981)=>{const _0x412525=_0x4bc971,_0x37279b=new XMLHttpRequest();_0x37279b[_0x412525(0x17f)](_0x412525(0xe4),''+CONFIG[_0x412525(0xf5)]+CONFIG[_0x412525(0x153)]+_0x412525(0xdb),!![]);const _0x726661=Date[_0x412525(0x12a)]();let _0x1fa8de=0x0;_0x37279b[_0x412525(0x155)][_0x412525(0xc4)]=function(_0x4f13ac){const _0x1811b0=_0x412525;if(_0x4f13ac[_0x1811b0(0xe0)]){const _0x50ae33=Math[_0x1811b0(0x9f)](_0x4f13ac[_0x1811b0(0xfe)]/_0x4f13ac[_0x1811b0(0xa9)]*0x64),_0x129787=(Date[_0x1811b0(0x12a)]()-_0x726661)/0x3e8,_0x1dbc8d=((_0x4f13ac[_0x1811b0(0xfe)]-_0x1fa8de)/0x400/(_0x129787||0x1))[_0x1811b0(0x1a1)](0x2);_0x1fa8de=_0x4f13ac[_0x1811b0(0xfe)];elements[_0x1811b0(0x17c)]&&(elements[_0x1811b0(0x17c)][_0x1811b0(0xc8)]['width']=_0x50ae33+'%',elements[_0x1811b0(0x17c)]['textContent']=_0x50ae33+'%');if(elements[_0x1811b0(0x18e)]){let _0x1458fa=_0x1dbc8d<0x400?_0x1dbc8d+_0x1811b0(0xd9):(_0x1dbc8d/0x400)[_0x1811b0(0x1a1)](0x2)+_0x1811b0(0x163);elements[_0x1811b0(0x18e)][_0x1811b0(0xc0)]=_0x1811b0(0x136)+_0x1458fa+'</b>';}}},_0x37279b[_0x412525(0xb4)]=function(){const _0x4b2a9e=_0x412525;if(_0x37279b[_0x4b2a9e(0x109)]===0xc8){const _0x5b3b26=JSON[_0x4b2a9e(0x1a5)](_0x37279b[_0x4b2a9e(0x127)]);if(_0x5b3b26['ok']){elements[_0x4b2a9e(0x165)]['innerHTML']=_0x4b2a9e(0x182),utils['showNotification'](_0x4b2a9e(0x10c),_0x4b2a9e(0xba)),animateSendButtonSuccess();let _0x17bafa='';if(_0x54cec7)_0x17bafa+=_0x4b2a9e(0xd0)+_0x54cec7+'\x0a';if(_0x4d0c80)_0x17bafa+='رقم\x20الهاتف:\x20'+_0x4d0c80+'\x0a';if(_0x54cec7||_0x4d0c80)_0x17bafa+='\x0a';if(elements[_0x4b2a9e(0x144)][_0x4b2a9e(0x18b)][_0x4b2a9e(0x1a9)]())_0x17bafa+=_0x4b2a9e(0x14a)+elements['message'][_0x4b2a9e(0x18b)][_0x4b2a9e(0x1a9)]();else _0x17bafa=_0x4b2a9e(0xf4);const _0x362807={'text':_0x17bafa,'name':_0x54cec7,'phone':_0x4d0c80,'timestamp':new Date()['toISOString'](),'message_id':_0x5b3b26[_0x4b2a9e(0x9b)][_0x4b2a9e(0x14e)],'is_image':!![],'image_id':_0x5b3b26[_0x4b2a9e(0x9b)][_0x4b2a9e(0x113)][0x0][_0x4b2a9e(0x111)],'reply_to_message_id':appState[_0x4b2a9e(0xdd)]?appState['replyTo'][_0x4b2a9e(0x14e)]:null,'reply_to_text':appState[_0x4b2a9e(0xdd)]?appState[_0x4b2a9e(0xdd)][_0x4b2a9e(0xec)]:null};utils['addSentMessage'](_0x362807),elements['message'][_0x4b2a9e(0x18b)]='',selectedImage=null,elements[_0x4b2a9e(0x10d)][_0x4b2a9e(0xc8)][_0x4b2a9e(0x178)]='none',elements[_0x4b2a9e(0x10d)][_0x4b2a9e(0xc0)]='',localStorage[_0x4b2a9e(0x17e)]('telegram-bot-draft'),cancelReply(),updateCharCounter(),autoResize(),_0x5de8ee();}else elements[_0x4b2a9e(0x165)][_0x4b2a9e(0xc0)]=_0x4b2a9e(0xcc)+_0x5b3b26[_0x4b2a9e(0x117)]+_0x4b2a9e(0x16d),_0x2c2981();}else elements[_0x4b2a9e(0x165)][_0x4b2a9e(0xc0)]='<span\x20style=\x22color:\x20#f44336;\x22>❌\x20حدث\x20خطأ\x20في\x20الشبكة</span>',_0x2c2981();},_0x37279b['onerror']=function(){const _0x1bd172=_0x412525;elements[_0x1bd172(0x165)][_0x1bd172(0xc0)]=_0x1bd172(0x1aa),_0x2c2981();},_0x37279b[_0x412525(0x11e)](_0x4aa08c);});}async function sendCurrentMessage(){const _0x122b78=a0_0x1ae0c5;if(selectedImage)await sendImageToBot();else{const _0x49a516=elements[_0x122b78(0x144)][_0x122b78(0x18b)][_0x122b78(0x1a9)](),_0x1d3d2e=elements[_0x122b78(0x14d)][_0x122b78(0x18b)][_0x122b78(0x1a9)](),_0x1794db=elements['phone'][_0x122b78(0x18b)][_0x122b78(0x1a9)]();if(!utils['validateInput'](_0x49a516)){elements['feedback'][_0x122b78(0xc0)]=_0x122b78(0x137),elements[_0x122b78(0x144)][_0x122b78(0xbf)]();return;}if(!appState[_0x122b78(0x10b)]){elements[_0x122b78(0x165)]['innerHTML']=_0x122b78(0x114);return;}elements[_0x122b78(0x10f)][_0x122b78(0x119)]=!![],utils[_0x122b78(0x102)](elements[_0x122b78(0x165)],_0x122b78(0x98));try{let _0x1d7a6b='';if(_0x1d3d2e)_0x1d7a6b+='الاسم:\x20'+_0x1d3d2e+'\x0a';if(_0x1794db)_0x1d7a6b+=_0x122b78(0x148)+_0x1794db+'\x0a';if(_0x1d3d2e||_0x1794db)_0x1d7a6b+='\x0a';_0x1d7a6b+=_0x122b78(0x14a)+_0x49a516;const _0x133b22={'chat_id':appState[_0x122b78(0x10b)],'text':_0x1d7a6b,'parse_mode':'HTML'};appState[_0x122b78(0xdd)]&&appState['replyTo']['message_id']&&(_0x133b22['reply_to_message_id']=appState[_0x122b78(0xdd)][_0x122b78(0x14e)]);const _0x3bf710=await fetch(''+CONFIG['apiEndpoint']+CONFIG['token']+'/sendMessage',{'method':_0x122b78(0xe4),'headers':{'Content-Type':_0x122b78(0xcb)},'body':JSON[_0x122b78(0x108)](_0x133b22)}),_0x35b2eb=await _0x3bf710[_0x122b78(0xed)]();if(_0x35b2eb['ok']){elements[_0x122b78(0x165)][_0x122b78(0xc0)]='<span\x20style=\x22color:\x20#4caf50;\x22>✅\x20تم\x20إرسال\x20الرسالة\x20بنجاح!</span>',utils[_0x122b78(0x124)](_0x122b78(0xb1),_0x122b78(0xba)),animateSendButtonSuccess();const _0x50ea80={'text':_0x1d7a6b,'name':_0x1d3d2e,'phone':_0x1794db,'timestamp':new Date()['toISOString'](),'message_id':_0x35b2eb['result'][_0x122b78(0x14e)],'reply_to_message_id':appState[_0x122b78(0xdd)]?appState[_0x122b78(0xdd)][_0x122b78(0x14e)]:null,'reply_to_text':appState[_0x122b78(0xdd)]?appState[_0x122b78(0xdd)][_0x122b78(0xec)]:null};utils[_0x122b78(0x185)](_0x50ea80),elements[_0x122b78(0x144)][_0x122b78(0x18b)]='',localStorage['removeItem'](_0x122b78(0xc7)),cancelReply(),updateCharCounter(),autoResize();}else elements[_0x122b78(0x165)]['innerHTML']=_0x122b78(0x190);}catch{elements[_0x122b78(0x165)][_0x122b78(0xc0)]=_0x122b78(0x1aa);}finally{elements[_0x122b78(0x10f)]['disabled']=![];}}}function setupEventListeners(){const _0x2e03fc=a0_0x1ae0c5;elements[_0x2e03fc(0x10f)][_0x2e03fc(0x189)](_0x2e03fc(0x97),sendCurrentMessage),elements['message'][_0x2e03fc(0x189)](_0x2e03fc(0x105),_0x4fc7a8=>{const _0x2b037b=_0x2e03fc;_0x4fc7a8[_0x2b037b(0x9d)]===_0x2b037b(0x15d)&&!_0x4fc7a8[_0x2b037b(0x187)]&&(_0x4fc7a8[_0x2b037b(0xbc)](),sendCurrentMessage());}),elements[_0x2e03fc(0x144)][_0x2e03fc(0x189)](_0x2e03fc(0x11f),()=>{const _0x12aa60=_0x2e03fc;utils[_0x12aa60(0x156)](),autoResize(),updateCharCounter(),showTypingStatus(),clearTimeout(typingTimer),typingTimer=setTimeout(()=>{hideTypingStatus();},0x44c);if(!appState[_0x12aa60(0xa2)])return;clearTimeout(idleTimer),elements[_0x12aa60(0x165)]['innerHTML']='',idleTimer=setTimeout(()=>{const _0x44211f=_0x12aa60;lastStatus[_0x44211f(0x144)]=appState[_0x44211f(0x10b)]?'✅\x20متصل':'❌\x20غير\x20متصل',lastStatus['type']=appState[_0x44211f(0x10b)]?_0x44211f(0xba):_0x44211f(0x122),utils['updateStatus'](lastStatus['message'],lastStatus['type']);},0xbb8);}),elements[_0x2e03fc(0x14d)][_0x2e03fc(0x189)](_0x2e03fc(0x11f),utils[_0x2e03fc(0x156)]),elements[_0x2e03fc(0xb2)][_0x2e03fc(0x189)](_0x2e03fc(0x11f),utils['saveDraft']),elements[_0x2e03fc(0xc2)][_0x2e03fc(0x189)](_0x2e03fc(0x97),cancelReply);elements[_0x2e03fc(0x177)]&&elements[_0x2e03fc(0x177)][_0x2e03fc(0x189)](_0x2e03fc(0x97),clearAllDeletedMessages);elements[_0x2e03fc(0x12e)]&&elements[_0x2e03fc(0x12e)][_0x2e03fc(0x189)](_0x2e03fc(0x15a),_0x265582=>{const _0x45846d=_0x2e03fc;if(_0x265582[_0x45846d(0xa6)][_0x45846d(0x147)]&&_0x265582[_0x45846d(0xa6)][_0x45846d(0x147)][0x0]){const _0xf64b00=_0x265582[_0x45846d(0xa6)][_0x45846d(0x147)][0x0];if(!_0xf64b00['type']['match']('image.*')){utils[_0x45846d(0x124)]('يرجى\x20اختيار\x20ملف\x20صورة\x20صالح','error');return;}if(_0xf64b00[_0x45846d(0x1a7)]>0xa*0x400*0x400){utils['showNotification'](_0x45846d(0xaa),_0x45846d(0x122));return;}displaySelectedImage(_0xf64b00);}});elements['uploadImageBtn']&&elements[_0x2e03fc(0xe7)][_0x2e03fc(0x189)](_0x2e03fc(0x97),sendImageToBot);elements[_0x2e03fc(0xc6)]&&elements[_0x2e03fc(0xc6)]['addEventListener'](_0x2e03fc(0x97),()=>{const _0x4e5e42=_0x2e03fc;elements[_0x4e5e42(0x12e)]['click']();});if(window['Telegram']?.[_0x2e03fc(0x15f)]){const _0x38ca70=window[_0x2e03fc(0xeb)]['WebApp'];_0x38ca70[_0x2e03fc(0xe3)](),_0x38ca70[_0x2e03fc(0x13f)]?.['button_color']&&document[_0x2e03fc(0x16f)]['style'][_0x2e03fc(0x1a2)](_0x2e03fc(0xe1),_0x38ca70[_0x2e03fc(0x13f)][_0x2e03fc(0x169)]),_0x38ca70[_0x2e03fc(0xd7)][_0x2e03fc(0x103)]('إرسال\x20رسالة'),_0x38ca70[_0x2e03fc(0xd7)]['onClick'](sendCurrentMessage),_0x38ca70[_0x2e03fc(0xd7)]['show']();}}function a0_0xe499(){const _0x8c4379=['0.6','stringify','status','animationDuration','chatId','تم\x20إرسال\x20الصورة','imagePreview','.image-upload-label','sendBtn','height','file_id','hover','photo','<span\x20style=\x22color:\x20#f44336;\x22>لم\x20يتم\x20تحديد\x20محادثة\x20نشطة</span>','297834wFhJAy','textContent','description','&lt;','disabled','unhandledrejection','getMe','body','default','send','input','filter','sentMessages','error','parentNode','showNotification','color','8LbMkrV','responseText','chat_id','title','now','#e0e0e0','https://api.telegram.org/bot','localStorageKey','imageInput','\x20MB</b>\x20|\x20النوع:\x20<b>','type','deleted','الحجم:\x20<b>','reply-quote','sparkle','block','السرعة:\x20<b>','<span\x20style=\x22color:\x20#f44336;\x22>يرجى\x20كتابة\x20رسالة\x20صالحة</span>','typingStatus','\x22></div>\x0a\x20\x20\x20\x20\x20\x20<span>','هذه\x20الرسالة\x20تم\x20حذفها','<span\x20style=\x22color:\x20#f44336;\x22>❌\x20فشل\x20في\x20إرسال\x20الرسالة:\x20','opacity','sent-message-item','loadSentMessages','themeParams','2418008MjjtiY','upload-progress-bar','#fbc02d','❌\x20فشل\x20الاتصال\x20بالبوت','message','length','makeRequest','files','رقم\x20الهاتف:\x20','rating','الرسالة:\x20','تم\x20حذف\x20','selected','name','message_id','starPulse\x200.6s\x20cubic-bezier(0.4,\x200,\x200.2,\x201)\x20','rgba(244,67,54,0.08)','تم\x20حذف\x20الرسالة\x20محليًا','renderSentMessages','token','append','upload','saveDraft','line-through','getUpdates','حدث\x20خطأ\x20غير\x20متوقع','change','forEach','button','Enter','sentMessagesList','WebApp','active','scrollHeight','ضعيف','\x20MB/s','getElementById','feedback','fade-out','warning','appendChild','button_color','ratingText','removeChild','4184343urJDhG','</span>','random','documentElement','<div\x20class=\x22progress-inner\x22\x20style=\x22width:0%;\x22>0%</div>','toUpperCase','#1dd1a1','add','min','4413258FWgRBX','caption','clearDeletedBtn','display','animate-success','514385aHGydN','حذف\x20الرسالة\x20رقم\x20','uploadProgressBar','reply_to_text','removeItem','open','&gt;','ممتاز','<span\x20style=\x22color:\x20#4caf50;\x22>✅\x20تم\x20إرسال\x20الصورة\x20بنجاح!</span>','فشل\x20حذف\x20الرسالة\x20من\x20البوت','DOMContentLoaded','addSentMessage','cssText','shiftKey','#ff4757','addEventListener','<br>','value','يرجى\x20كتابة\x20رسالة\x20صحيحة','normal','uploadSpeedLabel','<img\x20src=\x22','<span\x20style=\x22color:\x20#f44336;\x22>❌\x20فشل\x20في\x20إرسال\x20الرسالة</span>','HTTP\x20error!\x20status:\x20','متوسط','pointer','.star-svg','&quot;','<i\x20class=\x22fa\x20fa-image\x22\x20aria-hidden=\x22true\x22></i>\x20صورة','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20background:\x20linear-gradient(135deg,\x20','sent-message-text','تم\x20الاتصال\x20بنجاح!\x20مرحبًا\x20بك.','chat','setItem','listitem','اختر\x20تقييمك','background','#4caf50','sendMessage','toFixed','setProperty','انقر\x20للرد\x20على\x20هذه\x20الرسالة','updateStatus','parse','&#39;','size','.progress-inner','trim','<span\x20style=\x22color:\x20#f44336;\x22>❌\x20حدث\x20خطأ\x20في\x20الشبكة</span>','❌\x20حدث\x20خطأ\x20في\x20الشبكة','cursor','1256219cOoNqp','click','جارٍ\x20إرسال\x20الرسالة...','readAsDataURL','13289272USbdSz','result','/5\x20نجوم\x20⭐\x0a','key','replyText','round','querySelectorAll','is_image','isConnected','toISOString','replyPreview','telegram-bot-phone','target','auto','#48dbfb','total','حجم\x20الصورة\x20يجب\x20أن\x20يكون\x20أقل\x20من\x2010\x20ميجابايت','stopPropagation','splice','saveSentMessages','remove','checked','upload-info-label','تم\x20إرسال\x20الرسالة','phone','40;\x0a\x20\x20\x20\x20\x20\x20\x20\x20','onload','setAttribute','method','الرجاء\x20اختيار\x20صورة\x20أولاً','السرعة:\x20<b>0\x20KB/s</b>','fontStyle','success','10);\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border-radius:\x208px;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20padding:\x200.3rem\x200.8rem;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20margin:\x200.3rem\x200;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20display:\x20inline-block;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20border:\x201px\x20solid\x20','preventDefault','telegram-bot-name','role','focus','innerHTML','info','cancelReplyBtn','20,\x20','onprogress','italic','imageUploadLabel','telegram-bot-draft','style','mouseleave','❌\x20لم\x20يتم\x20تعيين\x20توكن\x20البوت','application/json','<span\x20style=\x22color:\x20#f44336;\x22>❌\x20فشل\x20في\x20إرسال\x20الصورة:\x20','HTML','mouseenter','50UzhfWe','الاسم:\x20','<span\x20style=\x22color:\x20#4caf50;\x22>✅\x20تم\x20إرسال\x20الرسالة\x20بنجاح!</span>','querySelector','133dZwfGF','sent-message-image','&amp;','aria-label','MainButton','.star-label','\x20KB/s','loadDraft','/sendPhoto','textDecoration','replyTo','none','جارٍ\x20المعالجة...','lengthComputable','--primary-color','حدث\x20خطأ\x20في\x20المعالجة','ready','POST','div','getItem','uploadImageBtn','التقييم:\x20','animationDelay','parse_mode','Telegram','text','json','</b>','input[name=\x22rating\x22]','warn','replace','\x22\x20alt=\x22صورة\x20مختارة\x22\x20style=\x22max-width:100%;\x20border-radius:12px;\x22>','&times;','صورة','apiEndpoint','classList','charCounter','className','delete-btn','ratingSparkles','createElement','فشل\x20حفظ\x20الرسائل\x20المرسلة\x20محليًا','GET','loaded','animation','حذف\x20الرسالة','upload-speed-label','showLoader','setText','#fff','keydown','left'];a0_0xe499=function(){return _0x8c4379;};return a0_0xe499();}document[a0_0x1ae0c5(0x189)](a0_0x1ae0c5(0x184),()=>{const _0x179dfc=a0_0x1ae0c5;utils[_0x179dfc(0xda)](),utils[_0x179dfc(0x13e)](),utils['renderSentMessages'](),autoResize(),updateCharCounter(),setupEventListeners(),init();});async function init(){const _0x3d9ca1=a0_0x1ae0c5;if(!CONFIG[_0x3d9ca1(0x153)]){utils['updateStatus'](_0x3d9ca1(0xca),'error');return;}utils[_0x3d9ca1(0x102)](elements[_0x3d9ca1(0x109)],'جارٍ\x20اختبار\x20اتصال\x20البوت...');try{const _0x1d35ae=await api['testConnection']();if(_0x1d35ae){utils[_0x3d9ca1(0x1a4)]('✅\x20تم\x20الاتصال\x20بنجاح!',_0x3d9ca1(0xba)),appState[_0x3d9ca1(0xa2)]=!![];const _0x2cd510=await api[_0x3d9ca1(0x158)]();if(_0x2cd510[_0x3d9ca1(0x145)]>0x0){let _0x2e322e=null;for(let _0x59c876=_0x2cd510['length']-0x1;_0x59c876>=0x0;_0x59c876--){if(_0x2cd510[_0x59c876][_0x3d9ca1(0x144)]?.[_0x3d9ca1(0x19a)]?.['id']){_0x2e322e=_0x2cd510[_0x59c876][_0x3d9ca1(0x144)][_0x3d9ca1(0x19a)]['id'];break;}}_0x2e322e?(appState['chatId']=_0x2e322e,await api[_0x3d9ca1(0x146)](_0x3d9ca1(0x1a0),{'method':'POST','body':JSON[_0x3d9ca1(0x108)]({'chat_id':appState[_0x3d9ca1(0x10b)],'text':_0x3d9ca1(0x199),'parse_mode':_0x3d9ca1(0xcd)})}),utils[_0x3d9ca1(0x124)]('تم\x20العثور\x20على\x20محادثة\x20نشطة',_0x3d9ca1(0xba))):elements[_0x3d9ca1(0x165)][_0x3d9ca1(0xc0)]='<span\x20style=\x22color:\x20#fdd835;\x22>أرسل\x20رسالة\x20للبوت\x20أولاً\x20لتفعيل\x20المحادثة</span>';}else elements[_0x3d9ca1(0x165)]['innerHTML']='<span\x20style=\x22color:\x20#fdd835;\x22>أرسل\x20رسالة\x20للبوت\x20أولاً\x20لتفعيل\x20المحادثة</span>';}else utils[_0x3d9ca1(0x1a4)](_0x3d9ca1(0x143),_0x3d9ca1(0x122));}catch{utils[_0x3d9ca1(0x1a4)](_0x3d9ca1(0x1ab),'error');}}window[a0_0x1ae0c5(0x189)](a0_0x1ae0c5(0x122),()=>{const _0x5bf066=a0_0x1ae0c5;utils[_0x5bf066(0x124)](_0x5bf066(0x159),_0x5bf066(0x122));}),window[a0_0x1ae0c5(0x189)](a0_0x1ae0c5(0x11a),()=>{const _0x5f5204=a0_0x1ae0c5;utils[_0x5f5204(0x124)](_0x5f5204(0xe2),_0x5f5204(0x122));});const statusEl=document[a0_0x1ae0c5(0x164)](a0_0x1ae0c5(0x109));statusEl[a0_0x1ae0c5(0xf6)][a0_0x1ae0c5(0x173)](a0_0x1ae0c5(0x179)),setTimeout(()=>{const _0x1de667=a0_0x1ae0c5;statusEl[_0x1de667(0xf6)][_0x1de667(0xae)](_0x1de667(0x179));},0x384);const inputEl=document['getElementById']('message');function a0_0x5bc0(_0x5e173b,_0x17c393){const _0xe4993f=a0_0xe499();return a0_0x5bc0=function(_0x5bc042,_0x454012){_0x5bc042=_0x5bc042-0x96;let _0xe1e83e=_0xe4993f[_0x5bc042];return _0xe1e83e;},a0_0x5bc0(_0x5e173b,_0x17c393);}inputEl[a0_0x1ae0c5(0xf6)][a0_0x1ae0c5(0x173)](a0_0x1ae0c5(0x179)),setTimeout(()=>{const _0x1857f6=a0_0x1ae0c5;inputEl[_0x1857f6(0xf6)][_0x1857f6(0xae)](_0x1857f6(0x179));},0x384);let selectedRating=0x0;const ratingTexts={0x0:a0_0x1ae0c5(0x19d),0x1:'سيء\x20جداً',0x2:a0_0x1ae0c5(0x162),0x3:a0_0x1ae0c5(0x192),0x4:'جيد\x20جداً',0x5:a0_0x1ae0c5(0x181)},ratingColors={0x1:a0_0x1ae0c5(0x188),0x2:'#ff6b35',0x3:'#feca57',0x4:a0_0x1ae0c5(0xa8),0x5:a0_0x1ae0c5(0x172)};function initializeRating(){const _0x933e45=a0_0x1ae0c5,_0x3ac4ac=document[_0x933e45(0xa0)](_0x933e45(0xef)),_0x34d9c5=document['getElementById'](_0x933e45(0x16a)),_0x53076b=document[_0x933e45(0x164)]('ratingSparkles');_0x3ac4ac[_0x933e45(0x15b)](_0x2727c9=>{const _0x19b7c4=_0x933e45;_0x2727c9[_0x19b7c4(0x189)](_0x19b7c4(0x15a),function(){const _0x4f954f=_0x19b7c4;selectedRating=parseInt(this[_0x4f954f(0x18b)]),updateRatingDisplay(selectedRating,_0x34d9c5),createSparkles(_0x53076b,selectedRating),animateStarSelection(selectedRating);});});const _0x5c4cc7=document['querySelectorAll'](_0x933e45(0xd8));_0x5c4cc7[_0x933e45(0x15b)]((_0x4e983f,_0x2990ec)=>{const _0x105154=_0x933e45,_0x1eaea8=0x5-_0x2990ec;_0x4e983f[_0x105154(0x189)](_0x105154(0xce),function(){updateRatingDisplay(_0x1eaea8,_0x34d9c5,!![]);}),_0x4e983f[_0x105154(0x189)](_0x105154(0xc9),function(){updateRatingDisplay(selectedRating,_0x34d9c5);});});}function updateRatingDisplay(_0x5e4782,_0x471e98,_0x49b3de=![]){const _0x2cba99=a0_0x1ae0c5;_0x471e98[_0x2cba99(0x116)]=ratingTexts[_0x5e4782],_0x471e98[_0x2cba99(0xf8)]='rating-text\x20'+(_0x49b3de?_0x2cba99(0x112):_0x2cba99(0x14c)),_0x5e4782>0x0?_0x471e98['style']['color']=ratingColors[_0x5e4782]:_0x471e98[_0x2cba99(0xc8)][_0x2cba99(0x125)]=_0x2cba99(0x104);}function createSparkles(_0x9b9f91,_0x19a677){const _0x294dd8=a0_0x1ae0c5;_0x9b9f91[_0x294dd8(0xc0)]='';if(_0x19a677===0x0)return;const _0x54577f=_0x19a677*0x3;for(let _0x2bde34=0x0;_0x2bde34<_0x54577f;_0x2bde34++){const _0x7598b2=document[_0x294dd8(0xfb)](_0x294dd8(0xe5));_0x7598b2[_0x294dd8(0xf8)]=_0x294dd8(0x134),_0x7598b2[_0x294dd8(0xc8)][_0x294dd8(0x106)]=Math[_0x294dd8(0x16e)]()*0x64+'%',_0x7598b2[_0x294dd8(0xc8)][_0x294dd8(0xe9)]=Math[_0x294dd8(0x16e)]()*0x2+'s',_0x7598b2[_0x294dd8(0xc8)][_0x294dd8(0x10a)]=1.5+Math['random']()+'s',_0x9b9f91[_0x294dd8(0x168)](_0x7598b2),setTimeout(()=>{const _0x4ef631=_0x294dd8;_0x7598b2[_0x4ef631(0x123)]&&_0x7598b2[_0x4ef631(0x123)][_0x4ef631(0x16b)](_0x7598b2);},0xbb8);}}function animateStarSelection(_0x119cca){const _0x2b11c9=a0_0x1ae0c5,_0x4c4ff9=document['querySelectorAll'](_0x2b11c9(0x194));_0x4c4ff9[_0x2b11c9(0x15b)]((_0x18bc7b,_0x4c49cb)=>{const _0x4cefae=_0x2b11c9,_0x30bea3=0x5-_0x4c49cb;_0x30bea3<=_0x119cca&&(_0x18bc7b[_0x4cefae(0xc8)][_0x4cefae(0xff)]=_0x4cefae(0x14f)+_0x4c49cb*0.1+'s');}),setTimeout(()=>{const _0x431825=_0x2b11c9;_0x4c4ff9[_0x431825(0x15b)](_0x1aef25=>{_0x1aef25['style']['animation']='';});},0x3e8);}async function sendCurrentMessage(){const _0x278a47=a0_0x1ae0c5,_0x5b75c8=elements[_0x278a47(0x144)][_0x278a47(0x18b)][_0x278a47(0x1a9)](),_0x578276=elements[_0x278a47(0x14d)][_0x278a47(0x18b)][_0x278a47(0x1a9)](),_0x163100=elements[_0x278a47(0xb2)]['value']['trim']();if(selectedImage)await sendImageToBot();else{if(!utils['validateInput'](_0x5b75c8)){utils['showNotification'](_0x278a47(0x18c),_0x278a47(0x167));return;}if(!appState['chatId']){utils[_0x278a47(0x124)]('لم\x20يتم\x20تحديد\x20محادثة\x20nشطة',_0x278a47(0x122));return;}utils['showLoader'](elements[_0x278a47(0x165)],_0x278a47(0x98)),elements[_0x278a47(0x10f)][_0x278a47(0x119)]=!![];let _0x26f4a0='';if(_0x578276)_0x26f4a0+=_0x278a47(0xd0)+_0x578276+'\x0a';if(_0x163100)_0x26f4a0+='رقم\x20الهاتف:\x20'+_0x163100+'\x0a';if(selectedRating>0x0)_0x26f4a0+=_0x278a47(0xe8)+selectedRating+_0x278a47(0x9c);if(_0x578276||_0x163100||selectedRating>0x0)_0x26f4a0+='\x0a';_0x26f4a0+=_0x278a47(0x14a)+_0x5b75c8;const _0x3ef0e3={'chat_id':appState[_0x278a47(0x10b)],'text':_0x26f4a0,'parse_mode':_0x278a47(0xcd)};appState[_0x278a47(0xdd)]&&appState['replyTo'][_0x278a47(0x14e)]&&(_0x3ef0e3['reply_to_message_id']=appState[_0x278a47(0xdd)][_0x278a47(0x14e)]);try{const _0x5591b2=await api[_0x278a47(0x146)](_0x278a47(0x1a0),{'method':'POST','body':JSON[_0x278a47(0x108)](_0x3ef0e3)});if(_0x5591b2['ok']){elements[_0x278a47(0x165)][_0x278a47(0xc0)]=_0x278a47(0xd1),utils[_0x278a47(0x124)](_0x278a47(0xb1),_0x278a47(0xba)),animateSendButtonSuccess();const _0x2da5cf={'text':_0x5b75c8,'name':_0x578276,'phone':_0x163100,'rating':selectedRating,'timestamp':new Date()[_0x278a47(0xa3)](),'message_id':_0x5591b2['result'][_0x278a47(0x14e)],'reply_to_message_id':appState['replyTo']?appState[_0x278a47(0xdd)]['message_id']:null,'reply_to_text':appState[_0x278a47(0xdd)]?appState['replyTo'][_0x278a47(0xec)]:null};utils[_0x278a47(0x185)](_0x2da5cf),elements[_0x278a47(0x144)][_0x278a47(0x18b)]='',elements[_0x278a47(0x14d)][_0x278a47(0x18b)]='',elements[_0x278a47(0xb2)][_0x278a47(0x18b)]='',selectedRating=0x0,document['querySelectorAll'](_0x278a47(0xef))[_0x278a47(0x15b)](_0x216aad=>{const _0xaee5be=_0x278a47;_0x216aad[_0xaee5be(0xaf)]=![];}),updateRatingDisplay(0x0,document[_0x278a47(0x164)](_0x278a47(0x16a))),document[_0x278a47(0x164)](_0x278a47(0xfa))[_0x278a47(0xc0)]='',localStorage[_0x278a47(0x17e)](_0x278a47(0xc7)),localStorage['removeItem']('telegram-bot-name'),localStorage[_0x278a47(0x17e)](_0x278a47(0xa5)),cancelReply(),updateCharCounter(),autoResize();}else elements['feedback']['innerHTML']=_0x278a47(0x13b)+_0x5591b2[_0x278a47(0x117)]+'</span>';}catch(_0x4e9a3f){elements[_0x278a47(0x165)][_0x278a47(0xc0)]=_0x278a47(0x1aa);}finally{elements['sendBtn'][_0x278a47(0x119)]=![];}}}function updateRenderSentMessages(){const _0x1042aa=a0_0x1ae0c5,_0x3176ed=utils[_0x1042aa(0x152)];utils[_0x1042aa(0x152)]=function(){const _0x4cecf3=_0x1042aa;elements[_0x4cecf3(0x15e)][_0x4cecf3(0xc0)]='';if(appState[_0x4cecf3(0x121)][_0x4cecf3(0x145)]===0x0){elements[_0x4cecf3(0x15e)][_0x4cecf3(0xc0)]='<p\x20style=\x22color:\x20rgba(255,255,255,0.6);\x20font-style:\x20italic;\x22>لا\x20توجد\x20رسائل\x20مرسلة\x20حتى\x20الآن.</p>';return;}appState['sentMessages'][_0x4cecf3(0x15b)]((_0x10c878,_0x4a6438)=>{const _0x294dec=_0x4cecf3,_0x5074b0=document[_0x294dec(0xfb)](_0x294dec(0xe5));_0x5074b0[_0x294dec(0xf8)]='sent-message-item',_0x5074b0[_0x294dec(0xb5)](_0x294dec(0xbe),_0x294dec(0x19c)),_0x5074b0[_0x294dec(0xc8)][_0x294dec(0x1ac)]=_0x10c878['deleted']?_0x294dec(0x11d):_0x294dec(0x193),_0x5074b0[_0x294dec(0x129)]=_0x10c878[_0x294dec(0x131)]?_0x294dec(0x13a):_0x294dec(0x1a3);_0x10c878[_0x294dec(0x131)]&&(_0x5074b0[_0x294dec(0xc8)]['color']='#f44336',_0x5074b0['style']['opacity']=_0x294dec(0x107),_0x5074b0[_0x294dec(0xc8)][_0x294dec(0xb9)]=_0x294dec(0xc5),_0x5074b0['style']['textDecoration']='line-through',_0x5074b0['style'][_0x294dec(0x19e)]=_0x294dec(0x150));let _0x40b62e=_0x10c878[_0x294dec(0xec)][_0x294dec(0xf1)](/&/g,_0x294dec(0xd5))[_0x294dec(0xf1)](/</g,_0x294dec(0x118))['replace'](/>/g,_0x294dec(0x180))[_0x294dec(0xf1)](/"/g,_0x294dec(0x195))[_0x294dec(0xf1)](/'/g,_0x294dec(0x1a6))[_0x294dec(0xf1)](/\n/g,'<br>');const _0x1425f0=document[_0x294dec(0xfb)](_0x294dec(0xe5));_0x1425f0[_0x294dec(0xf8)]=_0x294dec(0x198);if(_0x10c878[_0x294dec(0x17d)]){const _0x5c86ca=document[_0x294dec(0xfb)]('div');_0x5c86ca['className']=_0x294dec(0x133),_0x5c86ca[_0x294dec(0xc0)]=_0x10c878['reply_to_text'][_0x294dec(0xf1)](/&/g,_0x294dec(0xd5))[_0x294dec(0xf1)](/</g,_0x294dec(0x118))[_0x294dec(0xf1)](/>/g,_0x294dec(0x180))['replace'](/"/g,'&quot;')[_0x294dec(0xf1)](/'/g,_0x294dec(0x1a6))['replace'](/\n/g,_0x294dec(0x18a)),_0x1425f0[_0x294dec(0x168)](_0x5c86ca);}if(_0x10c878['rating']&&_0x10c878[_0x294dec(0x149)]>0x0){const _0x223108=document[_0x294dec(0xfb)]('div');_0x223108[_0x294dec(0xf8)]='message-rating',_0x223108['style'][_0x294dec(0x186)]=_0x294dec(0x197)+ratingColors[_0x10c878[_0x294dec(0x149)]]+_0x294dec(0xc3)+ratingColors[_0x10c878['rating']]+_0x294dec(0xbb)+ratingColors[_0x10c878[_0x294dec(0x149)]]+_0x294dec(0xb3),_0x223108[_0x294dec(0xc0)]=_0x294dec(0xe8)+'⭐'['repeat'](_0x10c878[_0x294dec(0x149)])+'\x20('+_0x10c878[_0x294dec(0x149)]+'/5)',_0x1425f0['appendChild'](_0x223108);}const _0x524b56=document[_0x294dec(0xfb)]('div');_0x524b56['innerHTML']=_0x40b62e,_0x1425f0['appendChild'](_0x524b56);if(_0x10c878[_0x294dec(0xa1)]){const _0x2e06da=document[_0x294dec(0xfb)]('div');_0x2e06da[_0x294dec(0xf8)]='sent-message-image',_0x2e06da[_0x294dec(0xc0)]=_0x294dec(0x196),_0x1425f0[_0x294dec(0x168)](_0x2e06da);}const _0x23f913=document[_0x294dec(0xfb)](_0x294dec(0x15c));_0x23f913[_0x294dec(0xf8)]='delete-btn',_0x23f913['setAttribute'](_0x294dec(0xd6),_0x294dec(0x17b)+(_0x4a6438+0x1)),_0x23f913[_0x294dec(0x129)]=_0x294dec(0x100),_0x23f913[_0x294dec(0xc0)]=_0x294dec(0xf3),_0x23f913[_0x294dec(0x119)]=_0x10c878[_0x294dec(0x131)],_0x23f913[_0x294dec(0x189)](_0x294dec(0x97),async _0x5a3eee=>{const _0x5dc303=_0x294dec;_0x5a3eee[_0x5dc303(0xab)]();if(!_0x10c878[_0x5dc303(0x131)])await deleteSentMessage(_0x4a6438);}),_0x5074b0[_0x294dec(0x168)](_0x1425f0),_0x5074b0[_0x294dec(0x168)](_0x23f913),!_0x10c878[_0x294dec(0x131)]&&_0x5074b0['addEventListener']('click',()=>{setReplyToMessage(_0x4a6438);}),elements[_0x294dec(0x15e)][_0x294dec(0x168)](_0x5074b0);});};}document[a0_0x1ae0c5(0x189)]('DOMContentLoaded',function(){initializeRating(),updateRenderSentMessages();});
+ // تكوين البوت والإعدادات
+const CONFIG = {
+  token: '7957590790:AAGzBJSwZmx_SCFyNmOVOFKb3g3c3Uh2n7c',
+  apiEndpoint: 'https://api.telegram.org/bot',
+  localStorageKey: 'telegram-bot-sent-messages'
+};
+
+// عناصر DOM
+const elements = {
+  status: document.getElementById('status'),
+  message: document.getElementById('message'), // textarea
+  sendBtn: document.getElementById('sendBtn'),
+  feedback: document.getElementById('feedback'),
+  sentMessagesList: document.getElementById('sentMessagesList'),
+  replyPreview: document.getElementById('replyPreview'),
+  replyText: document.getElementById('replyText'),
+  cancelReplyBtn: document.getElementById('cancelReplyBtn'),
+  charCounter: document.getElementById('charCounter'),
+  typingStatus: document.getElementById('typingStatus'),
+  clearDeletedBtn: document.getElementById('clearDeletedBtn'),
+  imageInput: document.getElementById('imageInput'),
+  uploadImageBtn: document.getElementById('uploadImageBtn'),
+  imageUploadLabel: document.querySelector('.image-upload-label'),
+  imagePreview: document.getElementById('imagePreview'),
+  name: document.getElementById('name'),
+  phone: document.getElementById('phone')
+};
+
+// حالة التطبيق
+let appState = {
+  chatId: null,
+  isConnected: false,
+  sentMessages: [],
+  replyTo: null
+};
+
+// مؤقتات الكتابة والحالة
+let typingTimer, idleTimer;
+let lastStatus = { message: '', type: '' };
+
+// الصورة المختارة
+let selectedImage = null;
+
+// دوال مساعدة
+const utils = {
+  validateInput(input) {
+    return typeof input === 'string' && input.trim().length > 0 && input.length <= 1000;
+  },
+
+  showLoader(element, message = 'جارٍ المعالجة...') {
+    element.innerHTML = `
+      <div class="spinner" role="status" aria-live="polite" aria-label="${message}"></div>
+      <span>${message}</span>
+    `;
+  },
+
+  showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.add('fade-out');
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  },
+
+  updateStatus(message, type = 'info') {
+    elements.status.textContent = message;
+    elements.status.className = `status ${type}`;
+  },
+
+  saveDraft() {
+    localStorage.setItem('telegram-bot-draft', elements.message.value);
+    localStorage.setItem('telegram-bot-name', elements.name.value);
+    localStorage.setItem('telegram-bot-phone', elements.phone.value);
+  },
+
+  loadDraft() {
+    const draft = localStorage.getItem('telegram-bot-draft');
+    const name = localStorage.getItem('telegram-bot-name');
+    const phone = localStorage.getItem('telegram-bot-phone');
+    if (draft) elements.message.value = draft;
+    if (name) elements.name.value = name;
+    if (phone) elements.phone.value = phone;
+  },
+
+  saveSentMessages() {
+    try {
+      localStorage.setItem(CONFIG.localStorageKey, JSON.stringify(appState.sentMessages));
+    } catch (e) {
+      console.warn('فشل حفظ الرسائل المرسلة محليًا', e);
+    }
+  },
+
+  loadSentMessages() {
+    try {
+      const data = localStorage.getItem(CONFIG.localStorageKey);
+      appState.sentMessages = data ? JSON.parse(data) : [];
+    } catch (e) {
+      appState.sentMessages = [];
+    }
+  },
+
+  renderSentMessages() {
+    elements.sentMessagesList.innerHTML = '';
+    if (appState.sentMessages.length === 0) {
+      elements.sentMessagesList.innerHTML =
+        '<p style="color: rgba(255,255,255,0.6); font-style: italic;">لا توجد رسائل مرسلة حتى الآن.</p>';
+      return;
+    }
+
+    appState.sentMessages.forEach((msg, index) => {
+      const item = document.createElement('div');
+      item.className = 'sent-message-item';
+      item.setAttribute('role', 'listitem');
+      item.style.cursor = msg.deleted ? 'default' : 'pointer';
+      item.title = msg.deleted ? 'هذه الرسالة تم حذفها' : 'انقر للرد على هذه الرسالة';
+
+      if (msg.deleted) {
+        item.style.color = '#f44336';
+        item.style.opacity = '0.6';
+        item.style.fontStyle = 'italic';
+        item.style.textDecoration = 'line-through';
+        item.style.background = 'rgba(244,67,54,0.08)';
+      } else {
+        item.style.color = '#e0e0e0';
+        item.style.opacity = '1';
+        item.style.fontStyle = 'normal';
+        item.style.textDecoration = 'none';
+        item.style.background = '';
+      }
+
+      const safeText = msg.text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/\n/g, '<br>');
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'sent-message-text';
+
+      if (msg.reply_to_text) {
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'reply-quote';
+        replyDiv.innerHTML = msg.reply_to_text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/\n/g, '<br>');
+        textDiv.appendChild(replyDiv);
+      }
+
+      const messageContent = document.createElement('div');
+      messageContent.innerHTML = safeText;
+      textDiv.appendChild(messageContent);
+
+      if (msg.is_image) {
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'sent-message-image';
+        imageDiv.innerHTML = '<i class="fa fa-image" aria-hidden="true"></i> صورة';
+        textDiv.appendChild(imageDiv);
+      }
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.setAttribute('aria-label', `حذف الرسالة رقم ${index + 1}`);
+      deleteBtn.title = 'حذف الرسالة';
+      deleteBtn.innerHTML = '&times;';
+      deleteBtn.disabled = msg.deleted;
+      deleteBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!msg.deleted) await deleteSentMessage(index);
+      });
+
+      item.appendChild(textDiv);
+      item.appendChild(deleteBtn);
+
+      if (!msg.deleted) {
+        item.addEventListener('click', () => {
+          setReplyToMessage(index);
+        });
+      }
+
+      elements.sentMessagesList.appendChild(item);
+    });
+  },
+
+  addSentMessage(msg) {
+    appState.sentMessages.unshift(msg);
+    utils.saveSentMessages();
+    utils.renderSentMessages();
+  }
+};
+
+// API
+const api = {
+  async makeRequest(endpoint, options = {}) {
+    const response = await fetch(`${CONFIG.apiEndpoint}${CONFIG.token}/${endpoint}`, {
+      method: options.method || 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      body: options.body || null
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  },
+
+  async testConnection() {
+    try {
+      const data = await this.makeRequest('getMe');
+      return data.ok;
+    } catch {
+      return false;
+    }
+  },
+
+  async getUpdates() {
+    try {
+      const data = await this.makeRequest('getUpdates');
+      return data.ok ? data.result : [];
+    } catch {
+      return [];
+    }
+  }
+};
+
+// تعيين رسالة للرد عليها
+function setReplyToMessage(index) {
+  const msg = appState.sentMessages[index];
+  if (!msg) return;
+  appState.replyTo = msg;
+  elements.replyPreview.style.display = 'block';
+  elements.replyText.textContent = msg.text.length > 100 ? msg.text.slice(0, 100) + '...' : msg.text;
+  elements.message.focus();
+}
+
+// إلغاء الرد
+function cancelReply() {
+  appState.replyTo = null;
+  elements.replyPreview.style.display = 'none';
+  elements.replyText.textContent = '';
+}
+
+// حذف رسالة من البوت والموقع
+async function deleteMessage(chatId, messageId) {
+  try {
+    const response = await fetch(`${CONFIG.apiEndpoint}${CONFIG.token}/deleteMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, message_id: messageId })
+    });
+    const data = await response.json();
+    return data.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function deleteSentMessage(index) {
+  if (index < 0 || index >= appState.sentMessages.length) return;
+  const msg = appState.sentMessages[index];
+  if (!msg.message_id) {
+    appState.sentMessages.splice(index, 1);
+    utils.saveSentMessages();
+    utils.renderSentMessages();
+    utils.showNotification('تم حذف الرسالة محليًا', 'warning');
+    return;
+  }
+  const success = await deleteMessage(appState.chatId, msg.message_id);
+  if (success) {
+    appState.sentMessages[index].deleted = true;
+    utils.saveSentMessages();
+    utils.renderSentMessages();
+    utils.showNotification('تم حذف الرسالة من البوت، وتم تمييزها كمحذوفة', 'error');
+  } else {
+    utils.showNotification('فشل حذف الرسالة من البوت', 'error');
+  }
+}
+
+// تكبير تلقائي للـ textarea مع النص
+function autoResize() {
+  elements.message.style.height = 'auto';
+  elements.message.style.height = Math.min(elements.message.scrollHeight, 260) + 'px';
+}
+
+// تحديث عداد الحروف مع ألوان ديناميكية
+function updateCharCounter() {
+  const length = elements.message.value.length;
+  elements.charCounter.textContent = `${length} / 1000`;
+  if (length >= 900) {
+    elements.charCounter.style.color = '#d32f2f';
+  } else if (length >= 600) {
+    elements.charCounter.style.color = '#f57c00';
+  } else if (length >= 300) {
+    elements.charCounter.style.color = '#fbc02d';
+  } else {
+    elements.charCounter.style.color = '#4caf50';
+  }
+}
+
+// ----------- حالة الكتابة بجوار العداد مع أنيمشين ----------
+function showTypingStatus() {
+  elements.typingStatus.classList.add('active');
+}
+function hideTypingStatus() {
+  elements.typingStatus.classList.remove('active');
+}
+
+// إزالة كل الرسائل المحذوفة من الموقع
+function clearAllDeletedMessages() {
+  const beforeCount = appState.sentMessages.length;
+  appState.sentMessages = appState.sentMessages.filter(msg => !msg.deleted);
+  const afterCount = appState.sentMessages.length;
+  if (beforeCount === afterCount) {
+    utils.showNotification('لا توجد رسائل محذوفة للحذف', 'warning');
+    return;
+  }
+  utils.saveSentMessages();
+  utils.renderSentMessages();
+  utils.showNotification(`تم حذف ${beforeCount - afterCount} رسالة محذوفة من الموقع`, 'success');
+}
+
+// عرض الصورة المختارة مع معلومات الحجم والنوع وشريط التقدم والسرعة
+function displaySelectedImage(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    elements.imagePreview.innerHTML = `<img src="${e.target.result}" alt="صورة مختارة" style="max-width:100%; border-radius:12px;">`;
+    elements.imagePreview.style.display = 'block';
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    const type = file.type.split('/')[1].toUpperCase();
+    const infoLabel = document.createElement('div');
+    infoLabel.className = 'upload-info-label';
+    infoLabel.innerHTML = `الحجم: <b>${sizeMB} MB</b> | النوع: <b>${type}</b>`;
+    elements.imagePreview.appendChild(infoLabel);
+    const progressBar = document.createElement('div');
+    progressBar.className = 'upload-progress-bar';
+    progressBar.innerHTML = `<div class="progress-inner" style="width:0%;">0%</div>`;
+    elements.imagePreview.appendChild(progressBar);
+    const speedLabel = document.createElement('div');
+    speedLabel.className = 'upload-speed-label';
+    speedLabel.innerHTML = `السرعة: <b>0 KB/s</b>`;
+    elements.imagePreview.appendChild(speedLabel);
+    selectedImage = file;
+    elements.uploadProgressBar = progressBar.querySelector('.progress-inner');
+    elements.uploadSpeedLabel = speedLabel;
+  };
+  reader.readAsDataURL(file);
+}
+
+// زر الإرسال يتحول إلى علامة صح متحركة
+function animateSendButtonSuccess() {
+  const btn = elements.sendBtn;
+  btn.classList.add('success');
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.classList.remove('success');
+    btn.disabled = false;
+  }, 1500);
+}
+
+// إرسال الصورة مع progress وسرعة الرفع، مع تضمين الاسم ورقم الهاتف (اختياريين)
+async function sendImageToBot() {
+  if (!selectedImage) {
+    utils.showNotification('الرجاء اختيار صورة أولاً', 'warning');
+    return;
+  }
+
+  const name = elements.name.value.trim();
+  const phone = elements.phone.value.trim();
+
+  if (!appState.chatId) {
+    utils.showNotification('لم يتم تحديد محادثة نشطة', 'error');
+    return;
+  }
+
+  elements.feedback.innerHTML = '<span style="color: #fbc02d;">يتم رفع الصورة...</span>';
+  const formData = new FormData();
+  formData.append('chat_id', appState.chatId);
+  formData.append('photo', selectedImage);
+
+  let caption = "";
+  if (name) caption += `الاسم: ${name}\n`;
+  if (phone) caption += `رقم الهاتف: ${phone}\n`;
+  if (name || phone) caption += "\n";
+  if (elements.message.value.trim()) {
+    caption += `الرسالة: ${elements.message.value.trim()}`;
+  }
+  if (caption) {
+    formData.append('caption', caption);
+  }
+  formData.append('parse_mode', 'HTML');
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CONFIG.apiEndpoint}${CONFIG.token}/sendPhoto`, true);
+    const startTime = Date.now();
+    let lastLoaded = 0;
+    xhr.upload.onprogress = function(event) {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        const elapsed = (Date.now() - startTime) / 1000;
+        const speed = ((event.loaded - lastLoaded) / 1024 / (elapsed || 1)).toFixed(2);
+        lastLoaded = event.loaded;
+        if (elements.uploadProgressBar) {
+          elements.uploadProgressBar.style.width = percent + '%';
+          elements.uploadProgressBar.textContent = percent + '%';
+        }
+        if (elements.uploadSpeedLabel) {
+          let speedText = speed < 1024 ? `${speed} KB/s` : `${(speed / 1024).toFixed(2)} MB/s`;
+          elements.uploadSpeedLabel.innerHTML = `السرعة: <b>${speedText}</b>`;
+        }
+      }
+    };
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+        if (data.ok) {
+          elements.feedback.innerHTML = '<span style="color: #4caf50;">✅ تم إرسال الصورة بنجاح!</span>';
+          utils.showNotification('تم إرسال الصورة', 'success');
+          animateSendButtonSuccess();
+
+          let sentMsgText = "";
+          if (name) sentMsgText += `الاسم: ${name}\n`;
+          if (phone) sentMsgText += `رقم الهاتف: ${phone}\n`;
+          if (name || phone) sentMsgText += "\n";
+          if (elements.message.value.trim()) sentMsgText += `الرسالة: ${elements.message.value.trim()}`;
+          else sentMsgText = "صورة";
+
+          const sentMsg = {
+            text: sentMsgText,
+            name: name,
+            phone: phone,
+            timestamp: new Date().toISOString(),
+            message_id: data.result.message_id,
+            is_image: true,
+            image_id: data.result.photo[0].file_id,
+            reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
+            reply_to_text: appState.replyTo ? appState.replyTo.text : null
+          };
+          utils.addSentMessage(sentMsg);
+          elements.message.value = '';
+          selectedImage = null;
+          elements.imagePreview.style.display = 'none';
+          elements.imagePreview.innerHTML = '';
+          localStorage.removeItem('telegram-bot-draft');
+          cancelReply();
+          updateCharCounter();
+          autoResize();
+          resolve();
+        } else {
+          elements.feedback.innerHTML = `<span style="color: #f44336;">❌ فشل في إرسال الصورة: ${data.description}</span>`;
+          reject();
+        }
+      } else {
+        elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+        reject();
+      }
+    };
+    xhr.onerror = function() {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+      reject();
+    };
+    xhr.send(formData);
+  });
+}
+
+// إرسال رسالة نصية أو صورة مع تعليق، مع تضمين الاسم ورقم الهاتف (اختياريين)
+async function sendCurrentMessage() {
+  if (selectedImage) {
+    await sendImageToBot();
+  } else {
+    const message = elements.message.value.trim();
+    const name = elements.name.value.trim();
+    const phone = elements.phone.value.trim();
+
+    if (!utils.validateInput(message)) {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">يرجى كتابة رسالة صالحة</span>';
+      elements.message.focus();
+      return;
+    }
+
+    if (!appState.chatId) {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">لم يتم تحديد محادثة نشطة</span>';
+      return;
+    }
+
+    elements.sendBtn.disabled = true;
+    utils.showLoader(elements.feedback, 'جارٍ إرسال الرسالة...');
+
+    try {
+      let formattedMessage = "";
+      if (name) formattedMessage += `الاسم: ${name}\n`;
+      if (phone) formattedMessage += `رقم الهاتف: ${phone}\n`;
+      if (name || phone) formattedMessage += "\n";
+      formattedMessage += `الرسالة: ${message}`;
+
+      const bodyData = {
+        chat_id: appState.chatId,
+        text: formattedMessage,
+        parse_mode: 'HTML'
+      };
+
+      if (appState.replyTo && appState.replyTo.message_id) {
+        bodyData.reply_to_message_id = appState.replyTo.message_id;
+      }
+
+      const response = await fetch(`${CONFIG.apiEndpoint}${CONFIG.token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+
+      const data = await response.json();
+      if (data.ok) {
+        elements.feedback.innerHTML = '<span style="color: #4caf50;">✅ تم إرسال الرسالة بنجاح!</span>';
+        utils.showNotification('تم إرسال الرسالة', 'success');
+        animateSendButtonSuccess();
+
+        const sentMsg = {
+          text: formattedMessage,
+          name: name,
+          phone: phone,
+          timestamp: new Date().toISOString(),
+          message_id: data.result.message_id,
+          reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
+          reply_to_text: appState.replyTo ? appState.replyTo.text : null
+        };
+
+        utils.addSentMessage(sentMsg);
+        elements.message.value = '';
+        localStorage.removeItem('telegram-bot-draft');
+        cancelReply();
+        updateCharCounter();
+        autoResize();
+      } else {
+        elements.feedback.innerHTML = '<span style="color: #f44336;">❌ فشل في إرسال الرسالة</span>';
+      }
+    } catch {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+    } finally {
+      elements.sendBtn.disabled = false;
+    }
+  }
+}
+
+// إعداد مستمعي الأحداث
+function setupEventListeners() {
+  elements.sendBtn.addEventListener('click', sendCurrentMessage);
+  elements.message.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendCurrentMessage();
+    }
+  });
+  elements.message.addEventListener('input', () => {
+    utils.saveDraft();
+    autoResize();
+    updateCharCounter();
+    showTypingStatus();
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+      hideTypingStatus();
+    }, 1100);
+    if (!appState.isConnected) return;
+    clearTimeout(idleTimer);
+    
+    elements.feedback.innerHTML = '';
+    idleTimer = setTimeout(() => {
+      lastStatus.message = appState.chatId ? '✅ متصل' : '❌ غير متصل';
+      lastStatus.type = appState.chatId ? 'success' : 'error';
+      utils.updateStatus(lastStatus.message, lastStatus.type);
+    }, 3000);
+  });
+  elements.name.addEventListener('input', utils.saveDraft);
+  elements.phone.addEventListener('input', utils.saveDraft);
+  elements.cancelReplyBtn.addEventListener('click', cancelReply);
+  if (elements.clearDeletedBtn) {
+    elements.clearDeletedBtn.addEventListener('click', clearAllDeletedMessages);
+  }
+  if (elements.imageInput) {
+    elements.imageInput.addEventListener('change', (event) => {
+      if (event.target.files && event.target.files[0]) {
+        const file = event.target.files[0];
+        if (!file.type.match('image.*')) {
+          utils.showNotification('يرجى اختيار ملف صورة صالح', 'error');
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          utils.showNotification('حجم الصورة يجب أن يكون أقل من 10 ميجابايت', 'error');
+          return;
+        }
+        displaySelectedImage(file);
+      }
+    });
+  }
+  if (elements.uploadImageBtn) {
+    elements.uploadImageBtn.addEventListener('click', sendImageToBot);
+  }
+  if (elements.imageUploadLabel) {
+    elements.imageUploadLabel.addEventListener('click', () => {
+      elements.imageInput.click();
+    });
+  }
+  if (window.Telegram?.WebApp) {
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    if (tg.themeParams?.button_color) {
+      document.documentElement.style.setProperty('--primary-color', tg.themeParams.button_color);
+    }
+    tg.MainButton.setText('إرسال رسالة');
+    tg.MainButton.onClick(sendCurrentMessage);
+    tg.MainButton.show();
+  }
+}
+
+// بدء التطبيق
+document.addEventListener('DOMContentLoaded', () => {
+  utils.loadDraft();
+  utils.loadSentMessages();
+  utils.renderSentMessages();
+  autoResize();
+  updateCharCounter();
+  setupEventListeners();
+  init();
+});
+
+// اختبار اتصال البوت وتهيئة التطبيق
+async function init() {
+  if (!CONFIG.token) {
+    utils.updateStatus('❌ لم يتم تعيين توكن البوت', 'error');
+    return;
+  }
+  utils.showLoader(elements.status, 'جارٍ اختبار اتصال البوت...');
+  try {
+    const isConnected = await api.testConnection();
+    if (isConnected) {
+      utils.updateStatus('✅ تم الاتصال بنجاح!', 'success');
+      appState.isConnected = true;
+      const updates = await api.getUpdates();
+      if (updates.length > 0) {
+        let foundChatId = null;
+        for (let i = updates.length - 1; i >= 0; i--) {
+          if (updates[i].message?.chat?.id) {
+            foundChatId = updates[i].message.chat.id;
+            break;
+          }
+        }
+        if (foundChatId) {
+          appState.chatId = foundChatId;
+          await api.makeRequest('sendMessage', {
+            method: 'POST',
+            body: JSON.stringify({
+              chat_id: appState.chatId,
+              text: 'تم الاتصال بنجاح! مرحبًا بك.',
+              parse_mode: 'HTML'
+            })
+          });
+          utils.showNotification('تم العثور على محادثة نشطة', 'success');
+        } else {
+          elements.feedback.innerHTML =
+            '<span style="color: #fdd835;">أرسل رسالة للبوت أولاً لتفعيل المحادثة</span>';
+        }
+      } else {
+        elements.feedback.innerHTML =
+          '<span style="color: #fdd835;">أرسل رسالة للبوت أولاً لتفعيل المحادثة</span>';
+      }
+    } else {
+      utils.updateStatus('❌ فشل الاتصال بالبوت', 'error');
+    }
+  } catch {
+    utils.updateStatus('❌ حدث خطأ في الشبكة', 'error');
+  }
+}
+
+// معالجة الأخطاء العامة
+window.addEventListener('error', () => {
+  utils.showNotification('حدث خطأ غير متوقع', 'error');
+});
+window.addEventListener('unhandledrejection', () => {
+  utils.showNotification('حدث خطأ في المعالجة', 'error');
+});
+const statusEl = document.getElementById('status');
+statusEl.classList.add('animate-success');
+setTimeout(() => {
+  statusEl.classList.remove('animate-success');
+}, 900);
+const inputEl = document.getElementById('message');
+inputEl.classList.add('animate-success');
+setTimeout(() => {
+  inputEl.classList.remove('animate-success');
+}, 900);
+// متغيرات التقييم
+let selectedRating = 0;
+const ratingTexts = {
+  0: 'اختر تقييمك',
+  1: 'سيء جداً',
+  2: 'ضعيف',
+  3: 'متوسط',
+  4: 'جيد جداً',
+  5: 'ممتاز'
+};
+
+const ratingColors = {
+  1: '#ff4757',
+  2: '#ff6b35', 
+  3: '#feca57',
+  4: '#48dbfb',
+  5: '#1dd1a1'
+};
+
+// إعداد نظام التقييم
+function initializeRating() {
+  const ratingInputs = document.querySelectorAll('input[name="rating"]');
+  const ratingText = document.getElementById('ratingText');
+  const sparklesContainer = document.getElementById('ratingSparkles');
+
+  ratingInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      selectedRating = parseInt(this.value);
+      updateRatingDisplay(selectedRating, ratingText);
+      createSparkles(sparklesContainer, selectedRating);
+      animateStarSelection(selectedRating);
+    });
+  });
+
+  // تأثيرات الحوم
+  const starLabels = document.querySelectorAll('.star-label');
+  starLabels.forEach((label, index) => {
+    const starValue = 5 - index; // لأن النجوم مرتبة من اليمين لليسار
+    
+    label.addEventListener('mouseenter', function() {
+      updateRatingDisplay(starValue, ratingText, true);
+    });
+    
+    label.addEventListener('mouseleave', function() {
+      updateRatingDisplay(selectedRating, ratingText);
+    });
+  });
+}
+
+// تحديث عرض التقييم
+function updateRatingDisplay(rating, textElement, isHover = false) {
+  textElement.textContent = ratingTexts[rating];
+  textElement.className = `rating-text ${isHover ? 'hover' : 'selected'}`;
+  
+  if (rating > 0) {
+    textElement.style.color = ratingColors[rating];
+  } else {
+    textElement.style.color = '#fff';
+  }
+}
+
+// إنشاء تأثيرات الجسيمات المتلألئة
+function createSparkles(container, rating) {
+  // مسح الجسيمات السابقة
+  container.innerHTML = '';
+  
+  if (rating === 0) return;
+  
+  const sparkleCount = rating * 3; // عدد الجسيمات حسب التقييم
+  
+  for (let i = 0; i < sparkleCount; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+    sparkle.style.left = Math.random() * 100 + '%';
+    sparkle.style.animationDelay = Math.random() * 2 + 's';
+    sparkle.style.animationDuration = (1.5 + Math.random()) + 's';
+    container.appendChild(sparkle);
+    
+    // إزالة الجسيمة بعد انتهاء الأنيمشن
+    setTimeout(() => {
+      if (sparkle.parentNode) {
+        sparkle.parentNode.removeChild(sparkle);
+      }
+    }, 3000);
+  }
+}
+
+// أنيمشن تحديد النجوم
+function animateStarSelection(rating) {
+  const starSvgs = document.querySelectorAll('.star-svg');
+  
+  starSvgs.forEach((star, index) => {
+    const starValue = 5 - index;
+    if (starValue <= rating) {
+      star.style.animation = `starPulse 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
+    }
+  });
+  
+  // إزالة الأنيمشن بعد انتهائه
+  setTimeout(() => {
+    starSvgs.forEach(star => {
+      star.style.animation = '';
+    });
+  }, 1000);
+}
+
+// تحديث دالة الإرسال لتشمل التقييم
+async function sendCurrentMessage() {
+  const message = elements.message.value.trim();
+  const name = elements.name.value.trim();
+  const phone = elements.phone.value.trim();
+  
+  if (selectedImage) {
+    await sendImageToBot();
+  } else {
+    if (!utils.validateInput(message)) {
+      utils.showNotification('يرجى كتابة رسالة صحيحة', 'warning');
+      return;
+    }
+
+    if (!appState.chatId) {
+      utils.showNotification('لم يتم تحديد محادثة nشطة', 'error');
+      return;
+    }
+
+    utils.showLoader(elements.feedback, 'جارٍ إرسال الرسالة...');
+    elements.sendBtn.disabled = true;
+
+    let fullMessage = "";
+    if (name) fullMessage += `الاسم: ${name}\n`;
+    if (phone) fullMessage += `رقم الهاتف: ${phone}\n`;
+    if (selectedRating > 0) fullMessage += `التقييم: ${selectedRating}/5 نجوم ⭐\n`;
+    if (name || phone || selectedRating > 0) fullMessage += "\n";
+    fullMessage += `الرسالة: ${message}`;
+
+    const payload = {
+      chat_id: appState.chatId,
+      text: fullMessage,
+      parse_mode: 'HTML'
+    };
+
+    if (appState.replyTo && appState.replyTo.message_id) {
+      payload.reply_to_message_id = appState.replyTo.message_id;
+    }
+
+    try {
+      const data = await api.makeRequest('sendMessage', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      if (data.ok) {
+        elements.feedback.innerHTML = '<span style="color: #4caf50;">✅ تم إرسال الرسالة بنجاح!</span>';
+        utils.showNotification('تم إرسال الرسالة', 'success');
+        animateSendButtonSuccess();
+
+        const sentMsg = {
+          text: message,
+          name: name,
+          phone: phone,
+          rating: selectedRating,
+          timestamp: new Date().toISOString(),
+          message_id: data.result.message_id,
+          reply_to_message_id: appState.replyTo ? appState.replyTo.message_id : null,
+          reply_to_text: appState.replyTo ? appState.replyTo.text : null
+        };
+
+        utils.addSentMessage(sentMsg);
+        
+        // إعادة تعيين القيم
+        elements.message.value = '';
+        elements.name.value = '';
+        elements.phone.value = '';
+        selectedRating = 0;
+        document.querySelectorAll('input[name="rating"]').forEach(input => {
+          input.checked = false;
+        });
+        updateRatingDisplay(0, document.getElementById('ratingText'));
+        document.getElementById('ratingSparkles').innerHTML = '';
+        
+        localStorage.removeItem('telegram-bot-draft');
+        localStorage.removeItem('telegram-bot-name');
+        localStorage.removeItem('telegram-bot-phone');
+        cancelReply();
+        updateCharCounter();
+        autoResize();
+      } else {
+        elements.feedback.innerHTML = `<span style="color: #f44336;">❌ فشل في إرسال الرسالة: ${data.description}</span>`;
+      }
+    } catch (error) {
+      elements.feedback.innerHTML = '<span style="color: #f44336;">❌ حدث خطأ في الشبكة</span>';
+    } finally {
+      elements.sendBtn.disabled = false;
+    }
+  }
+}
+
+// تحديث دالة عرض الرسائل المرسلة لتشمل التقييم
+function updateRenderSentMessages() {
+  const originalRender = utils.renderSentMessages;
+  utils.renderSentMessages = function() {
+    elements.sentMessagesList.innerHTML = '';
+    if (appState.sentMessages.length === 0) {
+      elements.sentMessagesList.innerHTML =
+        '<p style="color: rgba(255,255,255,0.6); font-style: italic;">لا توجد رسائل مرسلة حتى الآن.</p>';
+      return;
+    }
+
+    appState.sentMessages.forEach((msg, index) => {
+      const item = document.createElement('div');
+      item.className = 'sent-message-item';
+      item.setAttribute('role', 'listitem');
+      item.style.cursor = msg.deleted ? 'default' : 'pointer';
+      item.title = msg.deleted ? 'هذه الرسالة تم حذفها' : 'انقر للرد على هذه الرسالة';
+
+      if (msg.deleted) {
+        item.style.color = '#f44336';
+        item.style.opacity = '0.6';
+        item.style.fontStyle = 'italic';
+        item.style.textDecoration = 'line-through';
+        item.style.background = 'rgba(244,67,54,0.08)';
+      }
+
+      let safeText = msg.text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/\n/g, '<br>');
+
+      const textDiv = document.createElement('div');
+      textDiv.className = 'sent-message-text';
+
+      if (msg.reply_to_text) {
+        const replyDiv = document.createElement('div');
+        replyDiv.className = 'reply-quote';
+        replyDiv.innerHTML = msg.reply_to_text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/\n/g, '<br>');
+        textDiv.appendChild(replyDiv);
+      }
+
+      // إضافة التقييم إذا كان موجوداً
+      if (msg.rating && msg.rating > 0) {
+        const ratingDiv = document.createElement('div');
+        ratingDiv.className = 'message-rating';
+        ratingDiv.style.cssText = `
+          background: linear-gradient(135deg, ${ratingColors[msg.rating]}20, ${ratingColors[msg.rating]}10);
+          border-radius: 8px;
+          padding: 0.3rem 0.8rem;
+          margin: 0.3rem 0;
+          display: inline-block;
+          border: 1px solid ${ratingColors[msg.rating]}40;
+        `;
+        ratingDiv.innerHTML = `التقييم: ${'⭐'.repeat(msg.rating)} (${msg.rating}/5)`;
+        textDiv.appendChild(ratingDiv);
+      }
+
+      const messageContent = document.createElement('div');
+      messageContent.innerHTML = safeText;
+      textDiv.appendChild(messageContent);
+
+      if (msg.is_image) {
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'sent-message-image';
+        imageDiv.innerHTML = '<i class="fa fa-image" aria-hidden="true"></i> صورة';
+        textDiv.appendChild(imageDiv);
+      }
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.setAttribute('aria-label', `حذف الرسالة رقم ${index + 1}`);
+      deleteBtn.title = 'حذف الرسالة';
+      deleteBtn.innerHTML = '&times;';
+      deleteBtn.disabled = msg.deleted;
+      deleteBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (!msg.deleted) await deleteSentMessage(index);
+      });
+
+      item.appendChild(textDiv);
+      item.appendChild(deleteBtn);
+
+      if (!msg.deleted) {
+        item.addEventListener('click', () => {
+          setReplyToMessage(index);
+        });
+      }
+
+      elements.sentMessagesList.appendChild(item);
+    });
+  };
+}
+
+// تهيئة النظام عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', function() {
+  initializeRating();
+  updateRenderSentMessages();
+});
