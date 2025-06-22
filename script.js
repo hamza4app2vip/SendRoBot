@@ -1,6 +1,6 @@
  // تكوين البوت والإعدادات
 const CONFIG = {
-  token: '7957590790:AAGzBJSwZmx_SCFyNmOVOFKb3g3c3Uh2n7c',
+  token: '7488563933:AAFe5qe7cyko5dlaXKr4CfNZe4mwpwn6uK8',
   apiEndpoint: 'https://api.telegram.org/bot',
   localStorageKey: 'telegram-bot-sent-messages'
 };
